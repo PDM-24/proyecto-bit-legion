@@ -4,7 +4,40 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="613b39b1-92fb-439a-a675-814449de2d0e" name="Changes" comment="" />
+    <list default="true" id="68a5485f-4b4f-484f-b3a6-9cb7b263f9e9" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/proyecto-bit-legion.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/.idea/deploymentTargetDropDown.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/.idea/kotlinc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/.idea/kotlinc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/.idea/migrations.xml" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/.idea/migrations.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/app/src/main/java/com/bitlegion/encantoartesano/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/app/src/main/java/com/bitlegion/encantoartesano/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/app/src/main/java/com/bitlegion/encantoartesano/component/HomeHeader.kt" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/app/src/main/java/com/bitlegion/encantoartesano/component/HomeHeader.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/app/src/main/java/com/bitlegion/encantoartesano/screen/Home.kt" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/app/src/main/java/com/bitlegion/encantoartesano/screen/Home.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/app/src/main/java/com/bitlegion/encantoartesano/screen/MainViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/app/src/main/java/com/bitlegion/encantoartesano/screen/MainViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/app/src/main/java/com/bitlegion/encantoartesano/screen/MenuScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/app/src/main/java/com/bitlegion/encantoartesano/screen/MenuScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/app/src/main/java/com/bitlegion/encantoartesano/ui/theme/Color.kt" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/app/src/main/java/com/bitlegion/encantoartesano/ui/theme/Color.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/app/src/main/res/drawable/baseline_grid_view_24.xml" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/app/src/main/res/drawable/baseline_grid_view_24.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/app/src/main/res/drawable/baseline_list_alt_24.xml" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/app/src/main/res/drawable/baseline_list_alt_24.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/app/src/main/res/drawable/baseline_sell_24.xml" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/app/src/main/res/drawable/baseline_sell_24.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/app/src/main/res/drawable/ic_launcher_background.xml" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/app/src/main/res/drawable/ic_launcher_background.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/app/src/main/res/drawable/outline_sell_24.xml" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/app/src/main/res/drawable/outline_sell_24.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/gradle/libs.versions.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EncantoArtesano/gradlew.bat" beforeDir="false" afterPath="$PROJECT_DIR$/EncantoArtesano/gradlew.bat" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,11 +46,14 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectColorInfo"><![CDATA[{
   "customColor": "",
   "associatedIndex": 0
 }]]></component>
-  <component name="ProjectId" id="2gIvhfuCPIBGPqndZIKktD97Fk9" />
+  <component name="ProjectId" id="2gtDRA1qdYAiIJP1JuWSleGiwzc" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -27,19 +63,22 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "develop",
+    "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/ordon/OneDrive/Documentos/GitHub/proyecto-bit-legion/EncantoArtesano"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="613b39b1-92fb-439a-a675-814449de2d0e" name="Changes" comment="" />
-      <created>1715398032000</created>
+      <changelist id="68a5485f-4b4f-484f-b3a6-9cb7b263f9e9" name="Changes" comment="" />
+      <created>1716507974642</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1715398032000</updated>
+      <updated>1716507974642</updated>
     </task>
     <servers />
   </component>
