@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import com.bitlegion.encantoartesano.screen.ProductDetailScreenPreview
 import com.bitlegion.encantoartesano.screen.TiendaUI
 import com.bitlegion.encantoartesano.ui.theme.EncantoArtesanoTheme
 import com.bitlegion.encantoartesano.ui.theme.LightPink
@@ -162,9 +163,9 @@ class MainActivity : ComponentActivity() {
                         },
                         drawerState = drawerState
                     ) {
-                        Scaffold(
-                        ) {
+                        Scaffold {
                             TiendaUI(scope, drawerState)
+                            /*ProductDetailScreenPreview()*/
                         }
                     }
                 }
