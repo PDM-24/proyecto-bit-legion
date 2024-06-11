@@ -37,15 +37,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.bitlegion.encantoartesano.screen.FavProduct
-import com.bitlegion.encantoartesano.screen.FavProductCard
 import com.bitlegion.encantoartesano.screen.LoginScreen
 import com.bitlegion.encantoartesano.screen.PaymentScreen
 import com.bitlegion.encantoartesano.screen.ProductDetailScreenPreview
 import com.bitlegion.encantoartesano.screen.RegisterScreen
+import com.bitlegion.encantoartesano.screen.SellerProfileScreen
 import com.bitlegion.encantoartesano.screen.ShoppingCartScreen
 import com.bitlegion.encantoartesano.screen.TiendaUI
+
 import com.bitlegion.encantoartesano.ui.theme.EncantoArtesanoTheme
 import com.bitlegion.encantoartesano.ui.theme.LightPink
 import kotlinx.coroutines.launch
@@ -165,13 +164,14 @@ class MainActivity : ComponentActivity() {
                     ) {
                         Scaffold {
 
-                            /*LoginScreen()*/
-                            /*RegisterScreen()*/
+                            //LoginScreen()
+                            //RegisterScreen()
                             TiendaUI(scope, drawerState)
-                            /*ProductDetailScreenPreview()*/
-                            /*ShoppingCartScreen(drawerState =drawerState )*/
+                            //ProductDetailScreenPreview()
+                            //ShoppingCartScreen(drawerState =drawerState )
+                            //SellerProfileScreen()
 
-                            /*PaymentScreen()*/
+                            //PaymentScreen()
                         }
                     }
                 }
