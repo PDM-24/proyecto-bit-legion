@@ -37,7 +37,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import com.bitlegion.encantoartesano.screen.FavProduct
+import com.bitlegion.encantoartesano.screen.FavProductCard
+import com.bitlegion.encantoartesano.screen.LoginScreen
 import com.bitlegion.encantoartesano.screen.ProductDetailScreenPreview
+import com.bitlegion.encantoartesano.screen.RegisterScreen
 import com.bitlegion.encantoartesano.screen.TiendaUI
 import com.bitlegion.encantoartesano.ui.theme.EncantoArtesanoTheme
 import com.bitlegion.encantoartesano.ui.theme.LightPink
@@ -157,9 +161,11 @@ class MainActivity : ComponentActivity() {
                         drawerState = drawerState
                     ) {
                         Scaffold {
-                            /*TiendaUI(scope, drawerState)*/
 
-                            ProductDetailScreenPreview()
+                            /*LoginScreen()*/
+                            /*ProductDetailScreenPreview()*/
+                            /*RegisterScreen()*/
+                            TiendaUI(scope, drawerState)
                         }
                     }
                 }
