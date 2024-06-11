@@ -5,9 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -63,7 +67,7 @@ fun DrawerScreen() {
                     composable("carrito") { Screen("Carrito de Compra") }
                     composable("favorito") { Screen("Favorito") }
                     composable("registro") { Screen("Registro de Compra") }
-                    composable("vender") { Screen("Vender Producto }*/
+                    composable("vender") { Screen("Vender Producto") }*/
                 }
             }
         )

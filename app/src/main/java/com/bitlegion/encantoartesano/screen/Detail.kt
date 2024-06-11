@@ -2,14 +2,14 @@ package com.bitlegion.encantoartesano.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,11 +24,17 @@ import com.bitlegion.encantoartesano.R
 import com.bitlegion.encantoartesano.component.Header
 import com.bitlegion.encantoartesano.ui.theme.Aqua
 import com.bitlegion.encantoartesano.ui.theme.grayWhite
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailScreen(drawerState: DrawerState) {
     val scope = rememberCoroutineScope()
+    var isFavorite by remember { mutableStateOf(false) }
+    val images = listOf(R.drawable.jarron, R.drawable.jarron, R.drawable.jarron) // Lista de imágenes
+    val pagerState = rememberPagerState()
 
     Column(
         modifier = Modifier
@@ -44,42 +50,52 @@ fun ProductDetailScreen(drawerState: DrawerState) {
                 .fillMaxWidth()
                 .height(200.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.jarron),
-                contentDescription = null,
+            HorizontalPager(
+                count = images.size,
+                state = pagerState,
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(8.dp))
-            )
+            ) { page ->
+                Image(
+                    painter = painterResource(id = images[page]),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
             IconButton(
-                onClick = { /* TODO: Handle favorite click */ },
+                onClick = { isFavorite = !isFavorite },
                 modifier = Modifier
                     .size(48.dp)
                     .padding(8.dp)
-                    .background(Color.Green, shape = CircleShape)
+                    .offset(x = (-16).dp)
+                    .background(Aqua,shape = CircleShape)
+
                     .clip(CircleShape)
             ) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "Favorite",
-                    /*colors = IconButtonDefaults.iconButtonColors(containerColor = Aqua, contentColor = Color.White)*/
-                    tint = Color.Red
+                    tint = if (isFavorite) Color.Red else Color.White
                 )
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset(x = (-16).dp)
         ) {
-            for (i in 1..3) {
+            images.forEachIndexed { index, _ ->
+                val color = if (pagerState.currentPage == index) Color.Red else Color.Gray
                 Box(
                     modifier = Modifier
                         .size(8.dp)
-                        .background(Color.Red, CircleShape)
+                        .background(color, CircleShape)
                         .padding(4.dp)
                 )
-                if (i < 3) {
+                if (index < images.size - 1) {
                     Spacer(modifier = Modifier.width(8.dp))
                 }
             }
@@ -89,7 +105,6 @@ fun ProductDetailScreen(drawerState: DrawerState) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(500.dp)
                 .background(color = Color(0xFF008080), shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)) // Aqua con esquinas superiores redondeadas
                 .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                 .padding(16.dp)
@@ -108,8 +123,8 @@ fun ProductDetailScreen(drawerState: DrawerState) {
                     )
                     Text(
                         text = "★★★★☆",
-                        fontSize = 30.sp,
-                        color = Color.White,
+                        fontSize = 32.sp,
+                        color = Color.Black,
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
@@ -120,7 +135,6 @@ fun ProductDetailScreen(drawerState: DrawerState) {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Agregar un espacio adicional aquí
                 Spacer(modifier = Modifier.height(200.dp))
 
                 Row(
@@ -150,13 +164,14 @@ fun ProductDetailScreen(drawerState: DrawerState) {
                             shape = RoundedCornerShape(8.dp),
                             modifier = Modifier
                                 .height(70.dp)
+                                .width(250.dp)
 
                                 .clip(RoundedCornerShape(8.dp))
                         ) {
                             Text(
                                 text = "Agregar al Carrito",
-                                fontSize = 16.sp,
-                                color = Color.White
+                                fontSize = 20.sp,
+                                color = Color.Black
                             )
                         }
                     }

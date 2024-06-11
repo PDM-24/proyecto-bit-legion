@@ -1,5 +1,6 @@
 package com.bitlegion.encantoartesano
 
+
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -9,16 +10,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.List
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,10 +33,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.bitlegion.encantoartesano.screen.ProductDetailScreenPreview
@@ -77,7 +70,7 @@ class MainActivity : ComponentActivity() {
                         title = "Perfíl",
                         selectedIcon = Icons.Filled.AccountCircle,
                         unselectedIcon = Icons.Outlined.AccountCircle,
-                       // badgeCount = 45
+                        // badgeCount = 45
                     ),
                     NavigationItem(
                         title = "Carrito de compra",
@@ -93,7 +86,7 @@ class MainActivity : ComponentActivity() {
                         title = "Registro de compra",
                         selectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
                         unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
-                       // badgeCount = 45
+                        // badgeCount = 45
                     ),
                     NavigationItem(
                         title = "Vender Producto",
@@ -115,9 +108,9 @@ class MainActivity : ComponentActivity() {
 
                         drawerContent = {
                             ModalDrawerSheet (
-                               drawerContainerColor = LightPink,
+                                drawerContainerColor = LightPink,
 
-                            ){
+                                ){
 
                                 items.forEachIndexed { index, item ->
                                     NavigationDrawerItem(
@@ -157,15 +150,16 @@ class MainActivity : ComponentActivity() {
                                             }
                                         },
 
-                                    )
+                                        )
                                 }
                             }
                         },
                         drawerState = drawerState
                     ) {
                         Scaffold {
-                            TiendaUI(scope, drawerState)
-                            /*ProductDetailScreenPreview()*/
+                            /*TiendaUI(scope, drawerState)*/
+
+                            ProductDetailScreenPreview()
                         }
                     }
                 }
