@@ -37,9 +37,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.bitlegion.encantoartesano.screen.FavProduct
 import com.bitlegion.encantoartesano.screen.FavProductCard
 import com.bitlegion.encantoartesano.screen.LoginScreen
+import com.bitlegion.encantoartesano.screen.PaymentScreen
 import com.bitlegion.encantoartesano.screen.ProductDetailScreenPreview
 import com.bitlegion.encantoartesano.screen.RegisterScreen
 import com.bitlegion.encantoartesano.screen.TiendaUI
@@ -163,9 +165,11 @@ class MainActivity : ComponentActivity() {
                         Scaffold {
 
                             /*LoginScreen()*/
+                            /*RegisterScreen()*/
+                            TiendaUI(scope, drawerState)
                             /*ProductDetailScreenPreview()*/
-                            RegisterScreen()
-                            /*TiendaUI(scope, drawerState)*/
+
+                            /*PaymentScreen()*/
                         }
                     }
                 }
