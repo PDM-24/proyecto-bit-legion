@@ -164,8 +164,8 @@ class MainActivity : ComponentActivity() {
 
                             /*LoginScreen()*/
                             /*ProductDetailScreenPreview()*/
-                            /*RegisterScreen()*/
-                            TiendaUI(scope, drawerState)
+                            RegisterScreen()
+                            /*TiendaUI(scope, drawerState)*/
                         }
                     }
                 }

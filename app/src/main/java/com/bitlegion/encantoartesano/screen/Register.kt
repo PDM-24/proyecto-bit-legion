@@ -3,6 +3,7 @@ package com.bitlegion.encantoartesano.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,13 +14,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bitlegion.encantoartesano.R
+import com.bitlegion.encantoartesano.ui.theme.Aqua
 
 @Composable
 fun RegisterScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF005B4F)), // Color de fondo
+            .background(Aqua),
+            //.background(Color(0xFF005B4F)), // Color de fondo
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -80,6 +83,14 @@ fun RegisterScreen() {
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        Text(
+            text = "El nombre de usuario es el nombre único con el que te identificarás en la plataforma.",
+            style = MaterialTheme.typography.body2.copy(color = Color.White),
+            modifier = Modifier.padding(horizontal = 32.dp)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -94,6 +105,14 @@ fun RegisterScreen() {
                 focusedBorderColor = Color.Gray,
                 unfocusedBorderColor = Color.Gray
             )
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "Asegúrate de que tu contraseña tenga al menos 8 caracteres, una mayúscula, una minúscula y un número.",
+            style = MaterialTheme.typography.body2.copy(color = Color.White),
+            modifier = Modifier.padding(horizontal = 32.dp)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -118,6 +137,14 @@ fun RegisterScreen() {
                     tint = Color.Red
                 )
             }
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "Debes ser mayor de 18 años para registrarte en nuestra plataforma.",
+            style = MaterialTheme.typography.body2.copy(color = Color.White),
+            modifier = Modifier.padding(horizontal = 32.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))

@@ -1,6 +1,5 @@
 package com.bitlegion.encantoartesano.screen
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -25,7 +24,7 @@ fun LoginScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(Aqua),
-            //.background(Color(0xFF005B4F)), // Color de fondo
+            //.background(Color(0xFF19647E)), // Color de fondo acorde a la imagen
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -33,7 +32,7 @@ fun LoginScreen() {
             painter = painterResource(id = R.drawable.logo_cuadrado), // Reemplaza con tu recurso de imagen
             contentDescription = null,
             modifier = Modifier
-                .height(200.dp)
+                .height(300.dp) // Ajuste del tamaño de la imagen
                 .fillMaxWidth(),
             contentScale = ContentScale.Crop
         )
@@ -43,7 +42,8 @@ fun LoginScreen() {
         Text(
             text = "Inicio de Sesión",
             style = MaterialTheme.typography.h5.copy(color = Color.White),
-            fontSize = 24.sp
+            fontSize = 24.sp,
+
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -51,12 +51,21 @@ fun LoginScreen() {
         Text(
             text = "Inicio de Sesión con tu cuenta de EncantoArtesano.",
             style = MaterialTheme.typography.body2.copy(color = Color.White)
+
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        var username by remember { mutableStateOf("EncantoArtesano") }
+        var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
+
+        Text(
+            text = "Usuario",
+            style = MaterialTheme.typography.body1.copy(color = Color.White),
+            modifier = Modifier.padding(horizontal = 32.dp)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
             value = username,
@@ -66,7 +75,8 @@ fun LoginScreen() {
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                backgroundColor = Color(0xFFD1C8B8), // Color de fondo del TextField
+                backgroundColor = Color(0xFFE8DED1), // Color de fondo del TextField
+
                 focusedBorderColor = Color.Red,
                 unfocusedBorderColor = Color.Gray
             ),
@@ -77,6 +87,14 @@ fun LoginScreen() {
                     tint = Color.Red
                 )
             }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Contraseña",
+            style = MaterialTheme.typography.body1.copy(color = Color.White),
+            modifier = Modifier.padding(horizontal = 32.dp)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -91,17 +109,17 @@ fun LoginScreen() {
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                backgroundColor = Color(0xFFD1C8B8), // Color de fondo del TextField
+                backgroundColor = Color(0xFFE8DED1), // Color de fondo del TextField
                 focusedBorderColor = Color.Gray,
                 unfocusedBorderColor = Color.Gray
             )
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(50.dp))
 
         Button(
             onClick = { /* Acción de inicio de sesión */ },
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFD26059)),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0XFFE19390)),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp)
@@ -109,7 +127,7 @@ fun LoginScreen() {
             Text(text = "Iniciar Sesión", color = Color.White)
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         TextButton(onClick = { /* Acción de registro */ }) {
             Text(text = "¿No tienes cuenta? Regístrate", color = Color.White)
