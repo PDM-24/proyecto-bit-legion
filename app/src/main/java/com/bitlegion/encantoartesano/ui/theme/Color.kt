@@ -15,3 +15,8 @@ val LightPink = Color(0XFFE19390)
 val MainRed = Color(0XFFD8463F)
 val LightGreen = Color(0XFF879660)
 val grayWhite = Color(0XFFD0CFCB)
+
+val MenuAdmin = Color(0xFFE19390)
+val ColorCards = Color(0xFFD0CFBC)
+
+val BgActiveUsers =Color(0xFF15746E)

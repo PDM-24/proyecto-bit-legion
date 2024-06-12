@@ -1,5 +1,6 @@
 package com.bitlegion.encantoartesano.component
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,22 +38,29 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
 import com.bitlegion.encantoartesano.ui.theme.MainRed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.math.log
 
 
 @Composable
-fun Header(scope: CoroutineScope, drawerState: DrawerState){
+fun Header(viewModel: MainViewModel){
+    val localScope = rememberCoroutineScope()
     Row (
         modifier = Modifier.padding(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ){
         IconButton(onClick = {
-            scope.launch {
-                drawerState.open()
+            viewModel.coroutineScope.launch {
+                withContext(localScope.coroutineContext) {
+                    viewModel.drawerState.open()
+                }
             }
+
         }) {
             Icon(
                 imageVector = Icons.Default.Menu,
@@ -76,7 +85,12 @@ fun Header(scope: CoroutineScope, drawerState: DrawerState){
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.background(color = Color.White.copy(alpha = 0.6f), shape = RoundedCornerShape(8.dp)).width(265.dp)
+                modifier = Modifier
+                    .background(
+                        color = Color.White.copy(alpha = 0.6f),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .width(265.dp)
 
             )
         }
