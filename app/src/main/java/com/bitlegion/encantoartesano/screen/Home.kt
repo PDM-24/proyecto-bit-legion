@@ -11,6 +11,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
 import com.bitlegion.encantoartesano.component.Header
 import com.bitlegion.encantoartesano.ui.theme.Aqua
@@ -33,7 +38,9 @@ data class Producto(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun TiendaUI(scope: CoroutineScope, drawerState: DrawerState, navController: NavHostController) {
+fun TiendaUI(viewModel: MainViewModel, navController: NavHostController) {
+
+
     val productos = listOf(
         Producto("Nombre Producto 1", "Descripción del producto 1", "$25"),
         Producto("Nombre Producto 2", "Descripción del producto 2", "$30"),
@@ -47,7 +54,7 @@ fun TiendaUI(scope: CoroutineScope, drawerState: DrawerState, navController: Nav
             .fillMaxSize()
     ) {
         // Barra de búsqueda
-        Header(scope = scope, drawerState = drawerState)
+        Header(viewModel)
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(
@@ -71,6 +78,9 @@ fun TiendaUI(scope: CoroutineScope, drawerState: DrawerState, navController: Nav
 
 @Composable
 fun ProductoCard(producto: Producto, navController: NavHostController) {
+    var isFavorite by remember { mutableStateOf(false) }
+
+
     Card(
         modifier = Modifier
             .fillMaxWidth(0.5f)
@@ -118,11 +128,14 @@ fun ProductoCard(producto: Producto, navController: NavHostController) {
                     )
                     Spacer(modifier = Modifier.width(105.dp))
                     IconButton(
-                        onClick = { /*TODO*/ },
+                        onClick = { isFavorite = !isFavorite  },
                         modifier = Modifier.size(30.dp),
                         colors = IconButtonDefaults.iconButtonColors(containerColor = Aqua, contentColor = Color.White)
                     ) {
-                        Icon(imageVector = Icons.Filled.Favorite, contentDescription = "Settings", modifier = Modifier.size(16.dp))
+                        Icon(imageVector = Icons.Filled.Favorite,
+                            contentDescription = "Settings",
+                            tint = if (isFavorite) Color.Red else Color.White,
+                            modifier = Modifier.size(16.dp))
                     }
                 }
             }

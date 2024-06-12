@@ -20,8 +20,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
 import com.bitlegion.encantoartesano.component.Header
 import com.bitlegion.encantoartesano.ui.theme.Aqua
@@ -29,10 +31,11 @@ import com.bitlegion.encantoartesano.ui.theme.grayWhite
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ProductDetailScreen(navController: NavHostController, drawerState: DrawerState, productName: String) {
+fun ProductDetailScreen(navController: NavHostController, productName: String, viewModel: MainViewModel) {
     val scope = rememberCoroutineScope()
     var isFavorite by remember { mutableStateOf(false) }
     val images = listOf(R.drawable.jarron, R.drawable.jarron, R.drawable.jarron) // Lista de imágenes
@@ -43,7 +46,7 @@ fun ProductDetailScreen(navController: NavHostController, drawerState: DrawerSta
             .background(color = grayWhite)
             .fillMaxSize()
     ) {
-        Header(scope = scope, drawerState = drawerState)
+        Header(viewModel)
 
         Spacer(modifier = Modifier.height(16.dp))
         Box(
@@ -186,9 +189,10 @@ fun ProductDetailScreen(navController: NavHostController, drawerState: DrawerSta
 @Preview(showBackground = true)
 @Composable
 fun ProductDetailScreenPreview() {
+    val viewModel: MainViewModel = viewModel()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val navController = rememberNavController()
-    ProductDetailScreen(navController, drawerState, "Nombre Producto")
+    ProductDetailScreen(navController,"Nombre Producto", viewModel)
 }
 
 
