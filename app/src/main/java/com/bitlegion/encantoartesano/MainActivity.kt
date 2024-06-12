@@ -159,6 +159,8 @@ class MainActivity : ComponentActivity() {
                                 composable("seller_profile") { SellerProfileScreen(navController) }
                                 composable("cart") { ShoppingCartScreen(navController, viewModel) }
                                 composable("favorites") { FavUI(viewModel) }
+                                //composable("pay") { PaymentScreen() }  // Añadir esta línea
+                                composable("pay") { PaymentScreen(navController) }  // Pasar el NavController
                             }
                         }
                     }

@@ -100,7 +100,7 @@ fun ShoppingCartScreen(navController: NavController, viewModel: MainViewModel) {
 
             // Pay Button
             Button(
-                onClick = { /*TODO: Implement payment*/ },
+                onClick = { navController.navigate("pay") },  // Navegar a la pantalla de pago
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
@@ -109,6 +109,7 @@ fun ShoppingCartScreen(navController: NavController, viewModel: MainViewModel) {
             ) {
                 Text(text = "Pagar", color = Color.White, fontSize = 18.sp)
             }
+
         }
     }
 }

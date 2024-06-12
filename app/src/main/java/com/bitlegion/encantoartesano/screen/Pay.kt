@@ -18,9 +18,11 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bitlegion.encantoartesano.R
+// Pay.kt
+import androidx.navigation.NavController
 
 @Composable
-fun PaymentScreen() {
+fun PaymentScreen(navController: NavController) {
     var cardHolder by remember { mutableStateOf("") }
     var cardNumber by remember { mutableStateOf("") }
     var expiryDate by remember { mutableStateOf("") }
@@ -32,7 +34,7 @@ fun PaymentScreen() {
             TopAppBar(
                 title = { Text("Pagar") },
                 navigationIcon = {
-                    IconButton(onClick = { /* Handle back navigation */ }) {
+                    IconButton(onClick = { navController.popBackStack() }) {  // Navegar hacia atrás
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
@@ -180,4 +182,3 @@ fun PaymentScreen() {
         }
     )
 }
-

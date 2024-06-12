@@ -10,9 +10,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="96bfd676-43ff-4ea0-af16-544fcd603602" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/ProductRegistration.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Cart.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Cart.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Pay.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Pay.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,7 +24,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=/Users/allandari/.android/avd/Pixel_3a_API_34.avd)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=C:\Users\HENMA\.android\avd\Pixel_7_Pro_API_30.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -101,10 +103,10 @@
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "Merging develop",
+    "git-widget-placeholder": "develop",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/ordon/OneDrive/Documentos/GitHub/laboratorios-carlos0rd/Laboratorio-5-main",
+    "last_opened_file_path": "C:/Users/HENMA/OneDrive/Escritorio/PDM/proyecto-bit-legion",
     "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
   }
 }]]></component>
@@ -113,7 +115,7 @@
       <recent name="C:\Users\HENMA\OneDrive\Escritorio\PDM moviles\proyecto-bit-legion\app\src\main\res\drawable" />
     </key>
   </component>
-  <component name="RunManager" selected="Compose Preview.ProductRegistrationPreview">
+  <component name="RunManager" selected="Android App.app">
     <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="EncantoArtesano.app.main" />
       <option name="DEPLOY" value="true" />
