@@ -2,7 +2,7 @@ package com.bitlegion.encantoartesano.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,9 +17,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.bitlegion.encantoartesano.R
 import com.bitlegion.encantoartesano.component.Header
 import com.bitlegion.encantoartesano.ui.theme.Aqua
@@ -30,7 +32,7 @@ import com.google.accompanist.pager.rememberPagerState
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ProductDetailScreen(drawerState: DrawerState) {
+fun ProductDetailScreen(navController: NavHostController, drawerState: DrawerState, productName: String) {
     val scope = rememberCoroutineScope()
     var isFavorite by remember { mutableStateOf(false) }
     val images = listOf(R.drawable.jarron, R.drawable.jarron, R.drawable.jarron) // Lista de imágenes
@@ -69,8 +71,7 @@ fun ProductDetailScreen(drawerState: DrawerState) {
                     .size(48.dp)
                     .padding(8.dp)
                     .offset(x = (-16).dp)
-                    .background(Aqua,shape = CircleShape)
-
+                    .background(Aqua, shape = CircleShape)
                     .clip(CircleShape)
             ) {
                 Icon(
@@ -105,7 +106,7 @@ fun ProductDetailScreen(drawerState: DrawerState) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(color = Color(0xFF008080), shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)) // Aqua con esquinas superiores redondeadas
+                .background(color = Color(0xFF008080), shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                 .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                 .padding(16.dp)
         ) {
@@ -115,7 +116,7 @@ fun ProductDetailScreen(drawerState: DrawerState) {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "Nombre Producto",
+                        text = productName,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
@@ -154,8 +155,10 @@ fun ProductDetailScreen(drawerState: DrawerState) {
                         Text(
                             text = "Nombre del vendedor",
                             fontSize = 18.sp,
-
-                            color = Color.White
+                            color = Color.White,
+                            modifier = Modifier.clickable {
+                                navController.navigate("seller_profile")
+                            }
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Button(
@@ -165,7 +168,6 @@ fun ProductDetailScreen(drawerState: DrawerState) {
                             modifier = Modifier
                                 .height(70.dp)
                                 .width(250.dp)
-
                                 .clip(RoundedCornerShape(8.dp))
                         ) {
                             Text(
@@ -185,6 +187,8 @@ fun ProductDetailScreen(drawerState: DrawerState) {
 @Composable
 fun ProductDetailScreenPreview() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    ProductDetailScreen(drawerState)
+    val navController = rememberNavController()
+    ProductDetailScreen(navController, drawerState, "Nombre Producto")
 }
+
 

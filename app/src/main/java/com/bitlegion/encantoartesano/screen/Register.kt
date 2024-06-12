@@ -13,27 +13,27 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.bitlegion.encantoartesano.R
 import com.bitlegion.encantoartesano.ui.theme.Aqua
 
 @Composable
-fun RegisterScreen() {
+fun RegisterScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Aqua),
-            //.background(Color(0xFF005B4F)), // Color de fondo
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
         IconButton(
-            onClick = { /* Acción para volver */ },
+            onClick = { navController.navigate("login") },
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(16.dp)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.baseline_chevron_left_24), // Reemplaza con tu recurso de ícono de volver
+                painter = painterResource(id = R.drawable.baseline_chevron_left_24),
                 contentDescription = null,
                 tint = Color.White
             )
@@ -68,13 +68,13 @@ fun RegisterScreen() {
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                backgroundColor = Color(0xFFD1C8B8), // Color de fondo del TextField
+                backgroundColor = Color(0xFFD1C8B8),
                 focusedBorderColor = Color.Red,
                 unfocusedBorderColor = Color.Gray
             ),
             trailingIcon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.baseline_check_24), // Ícono de verificación
+                    painter = painterResource(id = R.drawable.baseline_check_24),
                     contentDescription = null,
                     tint = Color.Red
                 )
@@ -101,7 +101,7 @@ fun RegisterScreen() {
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                backgroundColor = Color(0xFFD1C8B8), // Color de fondo del TextField
+                backgroundColor = Color(0xFFD1C8B8),
                 focusedBorderColor = Color.Gray,
                 unfocusedBorderColor = Color.Gray
             )
@@ -126,13 +126,13 @@ fun RegisterScreen() {
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                backgroundColor = Color(0xFFD1C8B8), // Color de fondo del TextField
+                backgroundColor = Color(0xFFD1C8B8),
                 focusedBorderColor = Color.Gray,
                 unfocusedBorderColor = Color.Gray
             ),
             trailingIcon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.baseline_check_24), // Ícono de verificación
+                    painter = painterResource(id = R.drawable.baseline_check_24),
                     contentDescription = null,
                     tint = Color.Red
                 )
@@ -161,8 +161,10 @@ fun RegisterScreen() {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        TextButton(onClick = { /* Acción para iniciar sesión */ }) {
+        TextButton(onClick = { navController.navigate("login") }) {
             Text(text = "¿Ya tienes cuenta? Iniciar Sesión", color = Color.White)
         }
     }
 }
+
+

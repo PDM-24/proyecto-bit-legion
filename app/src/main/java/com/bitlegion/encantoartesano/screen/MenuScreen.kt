@@ -62,12 +62,12 @@ fun DrawerScreen() {
             },
             content = {
                 NavHost(navController = navController, startDestination = "main") {
-                    /*composable("main") { TiendaUI("Perfil", drawerState, scope) }
-                    composable("perfil") { ScreenWithDrawer("Perfil", drawerState, scope) }
-                    composable("carrito") { Screen("Carrito de Compra") }
-                    composable("favorito") { Screen("Favorito") }
-                    composable("registro") { Screen("Registro de Compra") }
-                    composable("vender") { Screen("Vender Producto") }*/
+                    //composable("main") { TiendaUI(scope, drawerState, navController) }
+                    //composable("perfil") { ScreenWithDrawer("Perfil", drawerState, scope) }
+                    //composable("carrito") { ShoppingCartScreen(drawerState) }
+                    //composable("favorito") { Screen("Favorito") }
+                    //composable("registro") { Screen("Registro de Compra") }
+                    //composable("vender") { Screen("Vender Producto") }
                 }
             }
         )

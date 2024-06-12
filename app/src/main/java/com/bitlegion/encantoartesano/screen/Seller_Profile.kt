@@ -18,10 +18,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.bitlegion.encantoartesano.R
 
 @Composable
-fun SellerProfileScreen() {
+fun SellerProfileScreen(navController: NavHostController) {
     var name by remember { mutableStateOf("Jose Roberto") }
     var password by remember { mutableStateOf("************") }
     var age by remember { mutableStateOf("35") }
@@ -32,7 +33,7 @@ fun SellerProfileScreen() {
             .background(Color(0xFF2B7A78))
             .padding(16.dp)
     ) {
-        IconButton(onClick = { /* TODO: Implement back navigation */ }) {
+        IconButton(onClick = { navController.popBackStack() }) {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_chevron_left_24),
                 contentDescription = null,

@@ -12,6 +12,13 @@
     <list default="true" id="96bfd676-43ff-4ea0-af16-544fcd603602" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Detail.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Detail.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Home.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Home.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Login.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Login.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/MainViewModel.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/MenuScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/MenuScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Register.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Register.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Seller_Profile.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Seller_Profile.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
