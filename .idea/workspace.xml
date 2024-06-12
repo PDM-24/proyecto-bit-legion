@@ -10,14 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="96bfd676-43ff-4ea0-af16-544fcd603602" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/mainViewModel.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/MainActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/component/HomeHeader.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/component/HomeHeader.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Cart.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Cart.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Detail.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Detail.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Favorite.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Favorite.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Home.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen/Home.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,15 +107,8 @@
   }
 }]]></component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/app/src/main/res/drawable" />
-      <recent name="$PROJECT_DIR$/app/src/main/java/com/bitlegion/encantoartesano/screen" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\HENMA\OneDrive\Escritorio\PDM moviles\proyecto-bit-legion\app\src\main\res\drawable" />
-    </key>
-    <key name="CopyKotlinDeclarationDialog.RECENTS_KEY">
-      <recent name="com.bitlegion.encantoartesano.screen" />
     </key>
   </component>
   <component name="RunManager">
@@ -204,5 +190,8 @@
       <updated>1714945359730</updated>
     </task>
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="LAST_COMMIT_MESSAGE" value="" />
   </component>
 </project>
