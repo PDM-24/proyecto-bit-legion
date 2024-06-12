@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Favorite
@@ -22,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -32,40 +35,50 @@ import androidx.navigation.navArgument
 import com.bitlegion.encantoartesano.screen.*
 import com.bitlegion.encantoartesano.ui.theme.EncantoArtesanoTheme
 import com.bitlegion.encantoartesano.ui.theme.LightPink
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class NavigationItem(
     val title: String,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
-    val badgeCount: Int? = null
+    val badgeCount: Int? = null,
+    val route: String
 )
 
 class MainActivity : ComponentActivity() {
+
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val viewModel: MainViewModel = viewModel()
+            val drawerState = viewModel.drawerState
+            val localScope = rememberCoroutineScope()
+
             EncantoArtesanoTheme {
+
                 val navController = rememberNavController()
                 Surface(
                     color = MaterialTheme.colorScheme.background
                 ) {
                     NavHost(navController = navController, startDestination = "login") {
                         composable("login") { LoginScreen(navController) }
-                        composable("home") { HomeScreen(navController) }
+                        composable("home") { HomeScreen(navController, drawerState) }
                         composable("register") { RegisterScreen(navController) }
                         composable(
                             "detail/{productName}",
                             arguments = listOf(navArgument("productName") { type = NavType.StringType })
                         ) { backStackEntry ->
                             val productName = backStackEntry.arguments?.getString("productName") ?: ""
-                            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-                            ProductDetailScreen(navController, drawerState, productName)
+                            ProductDetailScreen(navController, drawerState, productName, viewModel)
                         }
                         composable("seller_profile") { SellerProfileScreen(navController) }
+                        composable("cart") { ShoppingCartScreen(drawerState = drawerState, viewModel) }
+                        composable("favorites") { FavUI(viewModel, drawerState) }
                     }
                 }
             }
@@ -73,46 +86,54 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(navController: NavHostController, drawerState: DrawerState) {
     val items = listOf(
         NavigationItem(
             title = "Principal",
             selectedIcon = Icons.Filled.Home,
             unselectedIcon = Icons.Outlined.Home,
+            route = "home"
         ),
         NavigationItem(
             title = "Perfíl",
             selectedIcon = Icons.Filled.AccountCircle,
             unselectedIcon = Icons.Outlined.AccountCircle,
+            route = "home"
         ),
         NavigationItem(
             title = "Carrito de compra",
             selectedIcon = Icons.Filled.ShoppingCart,
             unselectedIcon = Icons.Outlined.ShoppingCart,
+            route = "cart"
         ),
         NavigationItem(
             title = "Favoritos",
             selectedIcon = Icons.Filled.Favorite,
             unselectedIcon = Icons.Outlined.Favorite,
+            route = "favorites"
         ),
         NavigationItem(
             title = "Registro de compra",
             selectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
             unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
+            route = "home"
         ),
         NavigationItem(
             title = "Vender Producto",
             selectedIcon = ImageVector.vectorResource(R.drawable.baseline_sell_24),
             unselectedIcon = ImageVector.vectorResource(R.drawable.outline_sell_24),
+            route = "home"
         )
     )
+    val viewModel: MainViewModel = viewModel()
+    val localScope = rememberCoroutineScope()
 
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-    var selectedItemIndex by rememberSaveable {
-        mutableStateOf(0)
-    }
+
+
+    var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
 
     ModalNavigationDrawer(
         drawerContent = {
@@ -136,8 +157,12 @@ fun HomeScreen(navController: NavHostController) {
                         selected = index == selectedItemIndex,
                         onClick = {
                             selectedItemIndex = index
-                            scope.launch {
-                                drawerState.close()
+                            viewModel.coroutineScope.launch {
+
+                                withContext(localScope.coroutineContext) {
+                                    drawerState.close()
+                                    navController.navigate(item.route)
+                                }
                             }
                         },
                         icon = {
@@ -159,8 +184,11 @@ fun HomeScreen(navController: NavHostController) {
         },
         drawerState = drawerState
     ) {
-        Scaffold {
-            TiendaUI(scope, drawerState, navController)
+        Scaffold (
+
+        ){
+            TiendaUI(viewModel, drawerState, navController)
         }
     }
 }
+

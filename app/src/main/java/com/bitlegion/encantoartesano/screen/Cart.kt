@@ -28,9 +28,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.material3.DrawerState
+import com.bitlegion.encantoartesano.MainViewModel
 
 @Composable
-fun ShoppingCartScreen(drawerState: DrawerState) {
+fun ShoppingCartScreen(drawerState: DrawerState, viewModel: MainViewModel) {
     val scope = rememberCoroutineScope()
     Column(
         modifier = Modifier
@@ -38,7 +39,7 @@ fun ShoppingCartScreen(drawerState: DrawerState) {
             .background(Color(0xFFD3C4B8))
     ) {
         // Call HomeHeader
-        Header(scope, drawerState)
+        Header(viewModel, drawerState)
 
         Spacer(modifier = Modifier.height(16.dp))
 

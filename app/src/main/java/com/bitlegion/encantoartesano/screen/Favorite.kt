@@ -27,6 +27,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
 import com.bitlegion.encantoartesano.component.Header
 import com.bitlegion.encantoartesano.ui.theme.Aqua
@@ -49,7 +51,9 @@ data class FavProduct(
 )
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun FavUI(scope: CoroutineScope, drawerState: DrawerState) {
+fun FavUI(viewModel: MainViewModel, drawerState: DrawerState) {
+    val localScope = rememberCoroutineScope()
+
     val favProduct = listOf(
         FavProduct("Nombre", "Descripcion", "Precio"),
         FavProduct("Nombre", "Descripcion", "Precio"),
@@ -60,7 +64,7 @@ fun FavUI(scope: CoroutineScope, drawerState: DrawerState) {
         .background(color = grayWhite)
         .fillMaxSize()
     ) {
-        Header(scope = scope, drawerState = drawerState)
+        Header(viewModel, drawerState = drawerState)
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(
