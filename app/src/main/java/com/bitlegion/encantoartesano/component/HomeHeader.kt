@@ -48,7 +48,7 @@ import kotlin.math.log
 
 
 @Composable
-fun Header(viewModel: MainViewModel, drawerState: DrawerState){
+fun Header(viewModel: MainViewModel){
     val localScope = rememberCoroutineScope()
     Row (
         modifier = Modifier.padding(10.dp),
@@ -57,8 +57,7 @@ fun Header(viewModel: MainViewModel, drawerState: DrawerState){
         IconButton(onClick = {
             viewModel.coroutineScope.launch {
                 withContext(localScope.coroutineContext) {
-                    drawerState.open()
-                    Log.i("Drawer", drawerState.toString())
+                    viewModel.drawerState.open()
                 }
             }
 

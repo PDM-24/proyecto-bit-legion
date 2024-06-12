@@ -38,7 +38,7 @@ data class Producto(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun TiendaUI(viewModel: MainViewModel, drawerState: DrawerState, navController: NavHostController) {
+fun TiendaUI(viewModel: MainViewModel, navController: NavHostController) {
 
 
     val productos = listOf(
@@ -54,7 +54,7 @@ fun TiendaUI(viewModel: MainViewModel, drawerState: DrawerState, navController: 
             .fillMaxSize()
     ) {
         // Barra de búsqueda
-        Header(viewModel, drawerState = drawerState)
+        Header(viewModel)
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(

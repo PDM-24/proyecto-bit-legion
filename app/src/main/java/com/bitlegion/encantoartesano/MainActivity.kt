@@ -1,10 +1,8 @@
 package com.bitlegion.encantoartesano
-
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -29,13 +27,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-//import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.bitlegion.encantoartesano.screen.*
 import com.bitlegion.encantoartesano.ui.theme.EncantoArtesanoTheme
 import com.bitlegion.encantoartesano.ui.theme.LightPink
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -49,146 +45,125 @@ data class NavigationItem(
 
 class MainActivity : ComponentActivity() {
 
-
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val viewModel: MainViewModel = viewModel()
-            val drawerState = viewModel.drawerState
             val localScope = rememberCoroutineScope()
 
             EncantoArtesanoTheme {
-
                 val navController = rememberNavController()
-                Surface(
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    NavHost(navController = navController, startDestination = "login") {
-                        composable("login") { LoginScreen(navController) }
-                        composable("home") { HomeScreen(navController, drawerState) }
-                        composable("register") { RegisterScreen(navController) }
-                        composable(
-                            "detail/{productName}",
-                            arguments = listOf(navArgument("productName") { type = NavType.StringType })
-                        ) { backStackEntry ->
-                            val productName = backStackEntry.arguments?.getString("productName") ?: ""
-                            ProductDetailScreen(navController, drawerState, productName, viewModel)
+                Surface(color = MaterialTheme.colorScheme.background) {
+                    ModalNavigationDrawer(
+                        drawerState = viewModel.drawerState,
+                        drawerContent = {
+                            val items = listOf(
+                                NavigationItem(
+                                    title = "Principal",
+                                    selectedIcon = Icons.Filled.Home,
+                                    unselectedIcon = Icons.Outlined.Home,
+                                    route = "home"
+                                ),
+                                NavigationItem(
+                                    title = "Perfíl",
+                                    selectedIcon = Icons.Filled.AccountCircle,
+                                    unselectedIcon = Icons.Outlined.AccountCircle,
+                                    route = "home"
+                                ),
+                                NavigationItem(
+                                    title = "Carrito de compra",
+                                    selectedIcon = Icons.Filled.ShoppingCart,
+                                    unselectedIcon = Icons.Outlined.ShoppingCart,
+                                    route = "cart"
+                                ),
+                                NavigationItem(
+                                    title = "Favoritos",
+                                    selectedIcon = Icons.Filled.Favorite,
+                                    unselectedIcon = Icons.Outlined.Favorite,
+                                    route = "favorites"
+                                ),
+                                NavigationItem(
+                                    title = "Registro de compra",
+                                    selectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
+                                    unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
+                                    route = "home"
+                                ),
+                                NavigationItem(
+                                    title = "Vender Producto",
+                                    selectedIcon = ImageVector.vectorResource(R.drawable.baseline_sell_24),
+                                    unselectedIcon = ImageVector.vectorResource(R.drawable.outline_sell_24),
+                                    route = "home"
+                                )
+                            )
+                            var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
+                            ModalDrawerSheet(drawerContainerColor = LightPink) {
+                                items.forEachIndexed { index, item ->
+                                    NavigationDrawerItem(
+                                        modifier = Modifier.padding(12.dp),
+                                        colors = NavigationDrawerItemDefaults.colors(
+                                            unselectedContainerColor = LightPink,
+                                            selectedContainerColor = Color.LightGray,
+                                            selectedTextColor = Color.Black,
+                                            selectedIconColor = Color.Black,
+                                            unselectedTextColor = Color.White,
+                                            unselectedIconColor = Color.White
+                                        ),
+                                        label = { Text(text = item.title) },
+                                        selected = index == selectedItemIndex,
+                                        onClick = {
+                                            selectedItemIndex = index
+
+                                            viewModel.coroutineScope.launch {
+                                                withContext(localScope.coroutineContext) {
+                                                    viewModel.drawerState.close()
+
+                                                }
+                                            }
+                                            navController.navigate(item.route)
+                                        },
+                                        icon = {
+                                            Icon(
+                                                imageVector = if (index == selectedItemIndex) {
+                                                    item.selectedIcon
+                                                } else item.unselectedIcon,
+                                                contentDescription = item.title
+                                            )
+                                        },
+                                        badge = {
+                                            item.badgeCount?.let {
+                                                Text(text = it.toString())
+                                            }
+                                        }
+                                    )
+                                }
+                            }
                         }
-                        composable("seller_profile") { SellerProfileScreen(navController) }
-                        composable("cart") { ShoppingCartScreen(drawerState = drawerState, viewModel) }
-                        composable("favorites") { FavUI(viewModel, drawerState) }
+                    ) {
+                        Scaffold(
+
+                        ) {
+                            var drawerState = viewModel.drawerState
+                            NavHost(navController = navController, startDestination = "login") {
+                                composable("login") { LoginScreen(navController) }
+                                composable("home") { TiendaUI(viewModel, navController) }
+                                composable("register") { RegisterScreen(navController) }
+                                composable(
+                                    "detail/{productName}",
+                                    arguments = listOf(navArgument("productName") { type = NavType.StringType })
+                                ) { backStackEntry ->
+                                    val productName = backStackEntry.arguments?.getString("productName") ?: ""
+                                    ProductDetailScreen(navController, productName, viewModel)
+                                }
+                                composable("seller_profile") { SellerProfileScreen(navController) }
+                                composable("cart") { ShoppingCartScreen(navController, viewModel) }
+                                composable("favorites") { FavUI(viewModel) }
+                            }
+                        }
                     }
                 }
             }
         }
     }
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Composable
-fun HomeScreen(navController: NavHostController, drawerState: DrawerState) {
-    val items = listOf(
-        NavigationItem(
-            title = "Principal",
-            selectedIcon = Icons.Filled.Home,
-            unselectedIcon = Icons.Outlined.Home,
-            route = "home"
-        ),
-        NavigationItem(
-            title = "Perfíl",
-            selectedIcon = Icons.Filled.AccountCircle,
-            unselectedIcon = Icons.Outlined.AccountCircle,
-            route = "home"
-        ),
-        NavigationItem(
-            title = "Carrito de compra",
-            selectedIcon = Icons.Filled.ShoppingCart,
-            unselectedIcon = Icons.Outlined.ShoppingCart,
-            route = "cart"
-        ),
-        NavigationItem(
-            title = "Favoritos",
-            selectedIcon = Icons.Filled.Favorite,
-            unselectedIcon = Icons.Outlined.Favorite,
-            route = "favorites"
-        ),
-        NavigationItem(
-            title = "Registro de compra",
-            selectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
-            unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
-            route = "home"
-        ),
-        NavigationItem(
-            title = "Vender Producto",
-            selectedIcon = ImageVector.vectorResource(R.drawable.baseline_sell_24),
-            unselectedIcon = ImageVector.vectorResource(R.drawable.outline_sell_24),
-            route = "home"
-        )
-    )
-    val viewModel: MainViewModel = viewModel()
-    val localScope = rememberCoroutineScope()
-
-
-
-    var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
-
-    ModalNavigationDrawer(
-        drawerContent = {
-            ModalDrawerSheet(
-                drawerContainerColor = LightPink,
-            ) {
-                items.forEachIndexed { index, item ->
-                    NavigationDrawerItem(
-                        modifier = Modifier.padding(12.dp),
-                        colors = NavigationDrawerItemDefaults.colors(
-                            unselectedContainerColor = LightPink,
-                            selectedContainerColor = Color.LightGray,
-                            selectedTextColor = Color.Black,
-                            selectedIconColor = Color.Black,
-                            unselectedTextColor = Color.White,
-                            unselectedIconColor = Color.White
-                        ),
-                        label = {
-                            Text(text = item.title)
-                        },
-                        selected = index == selectedItemIndex,
-                        onClick = {
-                            selectedItemIndex = index
-                            viewModel.coroutineScope.launch {
-
-                                withContext(localScope.coroutineContext) {
-                                    drawerState.close()
-                                    navController.navigate(item.route)
-                                }
-                            }
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = if (index == selectedItemIndex) {
-                                    item.selectedIcon
-                                } else item.unselectedIcon,
-                                contentDescription = item.title
-                            )
-                        },
-                        badge = {
-                            item.badgeCount?.let {
-                                Text(text = item.badgeCount.toString())
-                            }
-                        },
-                    )
-                }
-            }
-        },
-        drawerState = drawerState
-    ) {
-        Scaffold (
-
-        ){
-            TiendaUI(viewModel, drawerState, navController)
-        }
-    }
-}
-

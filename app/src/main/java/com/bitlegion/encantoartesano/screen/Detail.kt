@@ -35,7 +35,7 @@ import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ProductDetailScreen(navController: NavHostController, drawerState: DrawerState, productName: String, viewModel: MainViewModel) {
+fun ProductDetailScreen(navController: NavHostController, productName: String, viewModel: MainViewModel) {
     val scope = rememberCoroutineScope()
     var isFavorite by remember { mutableStateOf(false) }
     val images = listOf(R.drawable.jarron, R.drawable.jarron, R.drawable.jarron) // Lista de imágenes
@@ -46,7 +46,7 @@ fun ProductDetailScreen(navController: NavHostController, drawerState: DrawerSta
             .background(color = grayWhite)
             .fillMaxSize()
     ) {
-        Header(viewModel, drawerState = drawerState)
+        Header(viewModel)
 
         Spacer(modifier = Modifier.height(16.dp))
         Box(
@@ -192,7 +192,7 @@ fun ProductDetailScreenPreview() {
     val viewModel: MainViewModel = viewModel()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val navController = rememberNavController()
-    ProductDetailScreen(navController, drawerState, "Nombre Producto", viewModel)
+    ProductDetailScreen(navController,"Nombre Producto", viewModel)
 }
 
 

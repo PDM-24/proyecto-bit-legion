@@ -51,7 +51,7 @@ data class FavProduct(
 )
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun FavUI(viewModel: MainViewModel, drawerState: DrawerState) {
+fun FavUI(viewModel: MainViewModel) {
     val localScope = rememberCoroutineScope()
 
     val favProduct = listOf(
@@ -64,7 +64,7 @@ fun FavUI(viewModel: MainViewModel, drawerState: DrawerState) {
         .background(color = grayWhite)
         .fillMaxSize()
     ) {
-        Header(viewModel, drawerState = drawerState)
+        Header(viewModel)
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(
