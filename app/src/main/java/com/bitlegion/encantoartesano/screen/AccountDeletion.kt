@@ -14,16 +14,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import com.bitlegion.encantoartesano.R
 
 @Composable
-fun AccountDeletion(){
+fun AccountDeletion(navController: NavController){
     var name by remember { mutableStateOf("Jose Roberto") }
     var password by remember { mutableStateOf("************") }
     var age by remember { mutableStateOf("35") }
@@ -34,7 +32,7 @@ fun AccountDeletion(){
             .background(Color(0xFF15746E))
             .padding(16.dp)
     ) {
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { navController.popBackStack() }) {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_chevron_left_24),
                 contentDescription = null,
@@ -167,8 +165,8 @@ fun AccountDeletionReadOnly(label: String, value: String, isPassword: Boolean = 
 }
 
 //Preview de prueba
-@Preview
-@Composable
-fun PreviewAccountDeletion(){
-    AccountDeletion()
-}
+//@Preview
+//@Composable
+//fun PreviewAccountDeletion(){
+//    AccountDeletion()
+//}
