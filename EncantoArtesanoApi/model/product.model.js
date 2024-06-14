@@ -6,27 +6,27 @@ const dataSchema = new Mongoose.Schema(
     {
         nombre:{
             type: String,
-            require: true,
+            required: true,
             trim: true
         },
         descripcion:{
             type: String,
-            require: true,
+            required: true,
             trim: true
         },
         ubicacion:{
             type: String,
-            require: true,
+            required: true,
             trim: true
         },
         precio:{
             type:  Number,
-            require: true,
+            required: true,
             
         },
         calificacion:{
             type: Number,
-            require: true,
+            required: true,
         },
         imagenes: {
             type: [String],
@@ -36,6 +36,7 @@ const dataSchema = new Mongoose.Schema(
         },
         fecha: {
             type: Date,
+            required: true,
             trim: true
         },
         user: {
