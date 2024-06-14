@@ -139,7 +139,7 @@ fun ProductDetailScreen(navController: NavHostController, productName: String, v
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Spacer(modifier = Modifier.height(200.dp))
+                Spacer(modifier = Modifier.height(175.dp))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -163,7 +163,7 @@ fun ProductDetailScreen(navController: NavHostController, productName: String, v
                                 navController.navigate("seller_profile")
                             }
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
                         Button(
                             onClick = { /* TODO: Handle add to cart */ },
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0XFFE19390)),
