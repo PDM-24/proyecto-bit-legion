@@ -106,7 +106,7 @@ class MainActivity : ComponentActivity() {
                                         title = "Vender Producto",
                                         selectedIcon = ImageVector.vectorResource(R.drawable.baseline_sell_24),
                                         unselectedIcon = ImageVector.vectorResource(R.drawable.outline_sell_24),
-                                        route = "home"
+                                        route = "vender"
                                     )
                                 )
                                 var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
@@ -184,9 +184,10 @@ fun AppContent(navController: NavHostController, viewModel: MainViewModel) {
             composable("seller_profile") { SellerProfileScreen(navController) }
             composable("cart") { ShoppingCartScreen(navController, viewModel) }
             composable("favorites") { FavUI(viewModel) }
-            //composable("pay") { PaymentScreen() }  // Añadir esta línea
-            composable("pay") { PaymentScreen(navController) }  // Pasar el NavController
+            composable("pay") { PaymentScreen(navController) }
+            composable("vender") { ProductRegistration() }
         }
+
     }
 }
 }
