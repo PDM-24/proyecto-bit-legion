@@ -4,12 +4,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,6 +66,7 @@ fun RegisterScreen(navController: NavHostController) {
             value = username,
             onValueChange = { username = it },
             label = { Text("Nombre de Usuario") },
+            singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),
@@ -95,6 +98,7 @@ fun RegisterScreen(navController: NavHostController) {
             value = password,
             onValueChange = { password = it },
             label = { Text("Contraseña") },
+            singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             placeholder = { Text("Introduce tu contraseña") },
             modifier = Modifier
@@ -122,6 +126,8 @@ fun RegisterScreen(navController: NavHostController) {
             onValueChange = { age = it },
             label = { Text("Edad") },
             placeholder = { Text("Introduce tu edad") },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp),

@@ -102,6 +102,7 @@ fun ProductDetails(label: String, value: String) {
         OutlinedTextField(
             value = value,
             onValueChange = {},
+            singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color(0xFFD0CFBC), RoundedCornerShape(8.dp)),

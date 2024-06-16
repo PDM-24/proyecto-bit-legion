@@ -50,15 +50,6 @@ Column(modifier = Modifier
 
 }
 
-
-
-
-
-
-
-
-
-
 @Preview(showBackground = true)
 @Composable
 fun ActiveUsersPreview(modifier: Modifier = Modifier) {
