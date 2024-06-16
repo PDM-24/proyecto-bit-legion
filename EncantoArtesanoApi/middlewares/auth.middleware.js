@@ -9,10 +9,10 @@ const PREFIX = "Bearer";
 
 middlewares.authentication = async (req, res, next) => {
     try {
-     
-  
+    
       //Verificar la autorizacion
       const { authorization } = req.headers;
+    //  console.log(authorization)
    // debug(req.headers);
       if(!authorization) {
           return res.status(401).json({ error: "User not authenticated1" });
@@ -66,10 +66,10 @@ middlewares.authorization = (roleRequired = ROLES.SYSADMIN) => {
     return (req, res, next) =>{
      //Antes de este middleware debe haber pasado por la autenticación
       try{
-        const {roles = []} = req.user;
+        const {rol = []} = req.user;
         //Se verifica que el rol requerido este en la colección
-        const isAuth = roles.includes(roleRequired);
-        const isSysAdmin = roles.includes(ROLES.SYSADMIN);
+        const isAuth = rol.includes(roleRequired);
+        const isSysAdmin = rol.includes(ROLES.SYSADMIN);
   
         //Si el rol no se encuentra o no es SYSADMIN se devuelve error
         if(!isAuth && !isSysAdmin){

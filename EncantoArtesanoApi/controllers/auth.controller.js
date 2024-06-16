@@ -1,6 +1,6 @@
 const User = require("../model/user.model");
 const ROLES = require("../data/roles.constants.json");
-const debug = require("debug")("index:auth-controller");
+const debug = require("debug")("EncantoArtesanoApi:auth-controller");
 
 
 const { createToken, verifyToken } = require("../utils/jwt.tools");
@@ -10,19 +10,25 @@ const controller = {};
 controller.register = async (req, res, next) => {
     try {
       //Obtener la info 
-      const { username, password } = req.body;
+
+      const{id}=req.params; 
+
+      const {username, password, fechaNac } = req.body;
       
       //Verificar la existencia del correo y el user
       const user = 
           await User.findOne({ $or: [{username: username}] });
+
+      const uniqueId = await User.findOne({$and: [{username: username}, {_id: id}]})
   
-      if(user){
+      if(user && !uniqueId){
           return res.status(409).json({ error: "User Already Exists" });
       }
       //Si no exsite lo creamos
       const newUser = new User({
           username: username,
           password: password,
+          fechaNac: fechaNac,
           rol: ROLES.USER
       })
   
@@ -30,11 +36,53 @@ controller.register = async (req, res, next) => {
   
       return res.status(201).json({ message: "User Created Successfully" });
     } catch (error) {
-      debug({ error });
       next(error);
     
     }
   }
+
+  
+controller.update = async (req, res, next) => {
+  try {
+    //Obtener la info 
+
+    const{id}=req.params; 
+
+    const {username, password, fechaNac } = req.body;
+    
+    //Verificar la existencia del correo y el user
+
+    let post = await User.findById(id);
+    if(!post){
+      return res.status(400).json({ error: "User not found" });
+
+    }
+
+    const user = 
+        await User.findOne({ $or: [{username: username}] });
+
+    const uniqueId = await User.findOne({$and: [{username: username}, {_id: id}]})
+
+    if(user && !uniqueId){
+        return res.status(409).json({ error: "User Already Exists" });
+    }
+
+        post["username"] = username;
+        post["password"] = password;
+        post["fechaNac"] = fechaNac;
+
+    const userSaved = await post.save();
+    if(!userSaved){
+      return res.status(409).json({error: "Error updating user"});
+  }
+      return res.status(201).json(userSaved);
+
+
+  } catch (error) {
+    next(error);
+  
+  }
+}
 
   
 controller.login = async (req, res, next) => {
@@ -79,6 +127,7 @@ controller.login = async (req, res, next) => {
     await user.save();
 
     //Devolver toke
+    
     return res.status(200).json({ token })
   } catch (error) {
     next(error);
@@ -96,6 +145,7 @@ controller.whoami = async (req, res, next) =>{
     next(error);
   }
 }
+
 
 module.exports = controller
 

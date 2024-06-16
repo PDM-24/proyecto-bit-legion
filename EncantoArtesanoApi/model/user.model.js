@@ -15,6 +15,10 @@ const userSchema = new Schema({
         type: String,
         default: ''
     },
+    fechaNac:{
+        type: Date,
+        required: true
+    },
     hashedPassword: {
         type: String,
         required: true,
@@ -29,7 +33,7 @@ const userSchema = new Schema({
     rol: {
         type: String,
         required: true,
-        default: "Usuario"
+        default: "User"
     },
     likedProducts:{
         type: [Schema.Types.ObjectId],
@@ -46,6 +50,7 @@ const userSchema = new Schema({
         ref: "product",
         default: []
     },
+    //Puede que se quite ya que en el modelo de producto ya se tiene el id del usuario que lo publicó
     onSaleProducts:{
         type: [Schema.Types.ObjectId],
         ref: "product",

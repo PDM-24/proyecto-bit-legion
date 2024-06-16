@@ -6,7 +6,7 @@ const mongoString = process.env.DATABASE_URL;
 const routes = require('./route/index.routes');
 const logger = require('morgan');
 const cors = require('cors');
-
+let debug = require('debug')('app:server');
 
 const app = express()
 app.use(logger('dev'));

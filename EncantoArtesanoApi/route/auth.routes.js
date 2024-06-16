@@ -3,6 +3,7 @@ const express = require('express');
 const User = require('../model/user.model')
 const authController = require("../controllers/auth.controller")
 const router = express.Router()
+const ROLES = require('../data/roles.constants.json')
 
 //Create user: POST
 router.post('/createUser', async (req, res) =>{
@@ -10,7 +11,8 @@ router.post('/createUser', async (req, res) =>{
     const data = new User({
         username: req.body.username,
         password: req.body.password,
-        rol: ROLES.USER,
+        fechaNac: req.body.fechaNac,
+        rol: ROLES.USER
     })
 
     try{
@@ -23,8 +25,23 @@ router.post('/createUser', async (req, res) =>{
 
 });
 
+//Obtener todos los usuarios
+
+router.get('/getAllUsers', async (req, res) =>{
+
+    try{
+        const data = await User.find()
+        res.status(200).json(data)
+    }
+    catch(error){
+        res.status(400).json({"result": error.message})
+    }
+
+});
+
+
 //Auth registro de usuario
-router.post("/register",
+router.post(["/register"],
    //registerValidator,
     //runValidator,
     authController.register
@@ -34,14 +51,26 @@ router.post("/register",
 router.post("/login", 
     authController.login);
 
+//Actualizar usuario
+router.patch("/update/:id",
+   
+    authController.update
+);
 
-
-//Update User TODO
-
-//Change user state?
-
-//Get all users
 
 //Get one user
+router.get('/getUser/:id', async (req, res) =>{
+
+    const{id}=req.params; 
+  
+    try{
+        const data = await User.findOne({_id: id})
+        res.json(data)
+    }
+    catch(error){
+        res.status(400).json({"result": error.message})
+    }
+  
+  });
 
 module.exports = router
