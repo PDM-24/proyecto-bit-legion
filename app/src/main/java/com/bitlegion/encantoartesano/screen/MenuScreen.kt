@@ -88,6 +88,7 @@ fun DrawerContent(navController: NavHostController, drawerState: DrawerState, sc
         DrawerButton(Icons.Filled.Favorite, "Favorito", "favorito", navController, drawerState, scope)
         DrawerButton(Icons.Filled.List, "Registro de Compra", "registro", navController, drawerState, scope)
         DrawerButton(Icons.Filled.AccountBox, "Vender Producto", "vender", navController, drawerState, scope)
+
     }
 }
 

@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,17 +14,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavHostController
 import com.bitlegion.encantoartesano.R
 
 @Composable
-fun EditProfileScreen(navController: NavController) {  // Cambié el nombre a EditProfileScreen
+fun PerfilScreen(navController: NavHostController) {
     var name by remember { mutableStateOf("Jose Roberto") }
     var password by remember { mutableStateOf("************") }
     var age by remember { mutableStateOf("35") }
@@ -33,7 +30,7 @@ fun EditProfileScreen(navController: NavController) {  // Cambié el nombre a Ed
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF15746E))
+            .background(Color(0xFF2B7A78))
             .padding(16.dp)
     ) {
         IconButton(onClick = { navController.popBackStack() }) {
@@ -45,10 +42,10 @@ fun EditProfileScreen(navController: NavController) {  // Cambié el nombre a Ed
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Editar Perfil",
-            color = Color.White,
+            text = "Perfil de Usuario",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
+            color = Color.White,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -61,29 +58,27 @@ fun EditProfileScreen(navController: NavController) {  // Cambié el nombre a Ed
                 painter = painterResource(id = R.drawable.logoapp),
                 contentDescription = null,
                 modifier = Modifier
-                    .fillMaxSize()
+                    .size(100.dp)
                     .clip(CircleShape),
                 contentScale = ContentScale.Crop
             )
             Icon(
                 painter = painterResource(id = R.drawable.baseline_camera_enhance_24),
                 contentDescription = null,
-                tint = Color.White,
                 modifier = Modifier
                     .size(24.dp)
                     .align(Alignment.BottomEnd)
-                    .offset(x = (-4).dp, y = (-4).dp)
+                    .offset(x = (-4).dp, y = (-4).dp),
+                tint = Color.White
             )
         }
-
         Spacer(modifier = Modifier.height(16.dp))
-        AccountEditable(label = "Nombre", value = name, onValueChange = { name = it })
+        PerfilLabel(label = "Nombre", value = name)
         Spacer(modifier = Modifier.height(16.dp))
-        AccountEditable(label = "Contraseña", value = password, onValueChange = { password = it })
+        PerfilLabel(label = "Contraseña", value = password, isPassword = true)
         Spacer(modifier = Modifier.height(16.dp))
-        AgeEdit(label = "Edad", value = age, onValueChange = { age = it })
+        PerfilLabel(label = "Edad", value = age)
         Spacer(modifier = Modifier.height(32.dp))
-
         Text(
             text = "Productos en venta",
             fontSize = 18.sp,
@@ -91,7 +86,6 @@ fun EditProfileScreen(navController: NavController) {  // Cambié el nombre a Ed
             color = Color.White
         )
         Spacer(modifier = Modifier.height(8.dp))
-
         Card(
             shape = RoundedCornerShape(8.dp),
             backgroundColor = Color(0XFFD0CFCB),
@@ -124,24 +118,22 @@ fun EditProfileScreen(navController: NavController) {  // Cambié el nombre a Ed
                 }
             }
         }
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { /*TODO*/ },
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFE19390)),
-            shape = RoundedCornerShape(16.dp),
+            onClick = { navController.navigate("edit_profile") },
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color(0xFFE19390),
+                contentColor = Color.White
+            ),
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
-            Text(
-                text = "Guardar",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold
-            )
+            Text(text = "Editar Perfil")
         }
     }
 }
 
 @Composable
-fun AccountEditable(label: String, value: String, onValueChange: (String) -> Unit) {
+fun PerfilLabel(label: String, value: String, isPassword: Boolean = false) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = label,
@@ -152,52 +144,21 @@ fun AccountEditable(label: String, value: String, onValueChange: (String) -> Uni
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
             value = value,
-            onValueChange = onValueChange,
+            onValueChange = {},
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFFD0CFBC), RoundedCornerShape(8.dp)),
+                .background(Color(0XFFD0CFCB), RoundedCornerShape(8.dp)),
             singleLine = true,
+            readOnly = true,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 textColor = Color.Black,
+                disabledTextColor = Color.Black,
                 focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black,
-                backgroundColor = Color(0xFFD0CFBC)
-            )
+                unfocusedBorderColor = Color.Gray,
+                disabledBorderColor = Color.Gray,
+                backgroundColor = Color(0XFFD0CFCB)
+            ),
+            visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None
         )
     }
-}
-
-@Composable
-fun AgeEdit(label: String, value: String, onValueChange: (String) -> Unit) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = label,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFFD0CFBC), RoundedCornerShape(8.dp)),
-            singleLine = true,
-
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                textColor = Color.Black,
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black,
-                backgroundColor = Color(0xFFD0CFBC)
-            )
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewEditProfile() {
-    EditProfileScreen(navController = rememberNavController())
 }

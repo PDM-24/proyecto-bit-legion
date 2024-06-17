@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                val showDrawer = currentRoute != "login" && currentRoute != "register"
+                val showDrawer = currentRoute != "login" && currentRoute != "register" && currentRoute != "perfil" && currentRoute != "edit_profile"
 
                 Surface(color = MaterialTheme.colorScheme.background) {
                     if (showDrawer) {
@@ -123,11 +123,10 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         ) {
-                                AppContent(navController, viewModel)
+                            AppContent(navController, viewModel)
                         }
 
-                        }
-                     else {
+                    } else {
                         AppContent(navController, viewModel)
                     }
                 }
@@ -135,34 +134,35 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @Composable
+    fun AppContent(navController: NavHostController, viewModel: MainViewModel) {
+        Scaffold {
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Composable
-fun AppContent(navController: NavHostController, viewModel: MainViewModel) {
-    Scaffold {
-
-        NavHost(navController = navController, startDestination = "login") {
-            composable("login") { LoginScreen(navController) }
-            composable("home") { TiendaUI(viewModel, navController) }
-            composable("register") { RegisterScreen(navController) }
-            composable(
-                "detail/{productName}",
-                arguments = listOf(navArgument("productName") { type = NavType.StringType })
-            ) { backStackEntry ->
-                val productName = backStackEntry.arguments?.getString("productName") ?: ""
-                ProductDetailScreen(navController, productName, viewModel)
+            NavHost(navController = navController, startDestination = "login") {
+                composable("login") { LoginScreen(navController) }
+                composable("home") { TiendaUI(viewModel, navController) }
+                composable("register") { RegisterScreen(navController) }
+                composable(
+                    "detail/{productName}",
+                    arguments = listOf(navArgument("productName") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val productName = backStackEntry.arguments?.getString("productName") ?: ""
+                    ProductDetailScreen(navController, productName, viewModel)
+                }
+                composable("perfil") { PerfilScreen(navController) }
+                composable("edit_profile") { EditProfileScreen(navController) }  // Nueva ruta para EditProfileScreen
+                composable("seller_profile") { SellerProfileScreen(navController) }  // Añadir esta ruta
+                composable("cart") { ShoppingCartScreen(navController, viewModel) }
+                composable("favorites") { FavUI(viewModel) }
+                composable("pay") { PaymentScreen(navController) }
+                composable("vender") { ProductRegistration() }
+                composable("adminHome") { TiendaUIAdmin(viewModel = viewModel, navController = navController) }
             }
-            composable("seller_profile") { SellerProfileScreen(navController) }
-            composable("cart") { ShoppingCartScreen(navController, viewModel) }
-            composable("favorites") { FavUI(viewModel) }
-            composable("pay") { PaymentScreen(navController) }
-            composable("vender") { ProductRegistration() }
-            composable("adminHome"){ TiendaUIAdmin(viewModel = viewModel, navController = navController)}
         }
-
     }
 }
-}
+
 @Composable
 fun setDrawerContent(rol: String): List<NavigationItem> {
     return if (rol == "admin") {
@@ -177,7 +177,7 @@ fun setDrawerContent(rol: String): List<NavigationItem> {
                 title = "Perfíl",
                 selectedIcon = Icons.Filled.AccountCircle,
                 unselectedIcon = Icons.Outlined.AccountCircle,
-                route = "adminHome"
+                route = "perfil"
             ),
             NavigationItem(
                 title = "Carrito de compra",
@@ -234,7 +234,7 @@ fun setDrawerContent(rol: String): List<NavigationItem> {
                 title = "Perfíl",
                 selectedIcon = Icons.Filled.AccountCircle,
                 unselectedIcon = Icons.Outlined.AccountCircle,
-                route = "home"
+                route = "perfil"
             ),
             NavigationItem(
                 title = "Carrito de compra",
@@ -269,4 +269,3 @@ fun setDrawerContent(rol: String): List<NavigationItem> {
         )
     }
 }
-
