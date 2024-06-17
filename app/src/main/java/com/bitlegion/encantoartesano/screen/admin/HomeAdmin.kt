@@ -1,13 +1,14 @@
-package com.bitlegion.encantoartesano.screen
+package com.bitlegion.encantoartesano.screen.admin
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -38,7 +39,7 @@ data class Producto(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun TiendaUI(viewModel: MainViewModel, navController: NavHostController) {
+fun TiendaUIAdmin(viewModel: MainViewModel, navController: NavHostController) {
 
 
     val productos = listOf(
@@ -112,6 +113,20 @@ fun ProductoCard(producto: Producto, navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceAround
         ) {
+            IconButton(
+                onClick = {  },
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .size(28.dp)
+                    .padding(4.dp)
+                    .background(Color.White, shape = CircleShape)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Cerrar",
+                    tint = Color.Black
+                )
+            }
             Image(
                 painter = painterResource(id = R.drawable.jarron), contentDescription = "Background image",
                 Modifier
