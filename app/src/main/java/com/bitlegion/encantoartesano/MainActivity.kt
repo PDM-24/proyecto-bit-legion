@@ -160,6 +160,11 @@ class MainActivity : ComponentActivity() {
                 composable("adminHome") { TiendaUIAdmin(viewModel = viewModel, navController = navController) }
                 // Agrega esta línea dentro de NavHost en MainActivity
                 composable("RegistroDeCompra") { BoughtItems(navController, viewModel) }
+                // Dentro de NavHost en la función AppContent
+                composable("active_users") { ActiveUsers() }
+                composable("account_deletion") { AccountDeletion(navController) }
+
+
 
             }
         }
@@ -210,13 +215,13 @@ fun setDrawerContent(rol: String): List<NavigationItem> {
                 title = "Cuentas bloqueadas",
                 selectedIcon = Icons.Filled.Person,
                 unselectedIcon = Icons.Outlined.Person,
-                route = "adminHome"
+                route = "account_deletion"
             ),
             NavigationItem(
                 title = "Administrar cuentas",
                 selectedIcon = Icons.Filled.AccountBox,
                 unselectedIcon = Icons.Outlined.AccountBox,
-                route = "login"
+                route = "active_users"
             ),
             NavigationItem(
                 title = "Cerrar Sesión",
