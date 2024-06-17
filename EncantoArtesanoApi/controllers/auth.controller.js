@@ -13,7 +13,7 @@ controller.register = async (req, res, next) => {
 
       const{id}=req.params; 
 
-      const {username, password, fechaNac } = req.body;
+      const {username, password, edad } = req.body;
       
       //Verificar la existencia del correo y el user
       const user = 
@@ -28,7 +28,7 @@ controller.register = async (req, res, next) => {
       const newUser = new User({
           username: username,
           password: password,
-          fechaNac: fechaNac,
+          edad: edad,
           rol: ROLES.USER
       })
   
@@ -48,7 +48,7 @@ controller.update = async (req, res, next) => {
 
     const{id}=req.params; 
 
-    const {username, password, fechaNac } = req.body;
+    const {username, password, edad } = req.body;
     
     //Verificar la existencia del correo y el user
 
@@ -69,7 +69,7 @@ controller.update = async (req, res, next) => {
 
         post["username"] = username;
         post["password"] = password;
-        post["fechaNac"] = fechaNac;
+        post["edad"] = edad;
 
     const userSaved = await post.save();
     if(!userSaved){

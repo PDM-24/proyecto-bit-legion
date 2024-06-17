@@ -15,8 +15,8 @@ const userSchema = new Schema({
         type: String,
         default: ''
     },
-    fechaNac:{
-        type: Date,
+    edad:{
+        type: Number,
         required: true
     },
     hashedPassword: {
