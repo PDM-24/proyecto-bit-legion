@@ -68,6 +68,7 @@ fun DrawerScreen() {
                     //composable("favorito") { Screen("Favorito") }
                     //composable("registro") { Screen("Registro de Compra") }
                     //composable("vender") { Screen("Vender Producto") }
+
                 }
             }
         )

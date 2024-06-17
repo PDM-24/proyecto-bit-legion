@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
                             drawerState = viewModel.drawerState,
                             drawerContent = {
                                 //El contenido del Drawer se controla mediante esta función dependiendo el rol del usuario
-                                val items = setDrawerContent(rol = "admin")
+                                val items = setDrawerContent(rol = "admin")//admin o user
 
                                 var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
                                 ModalDrawerSheet(drawerContainerColor = LightPink) {
@@ -156,8 +156,11 @@ class MainActivity : ComponentActivity() {
                 composable("cart") { ShoppingCartScreen(navController, viewModel) }
                 composable("favorites") { FavUI(viewModel) }
                 composable("pay") { PaymentScreen(navController) }
-                composable("vender") { ProductRegistration() }
+                composable("vender") { ProductRegistration(navController) }
                 composable("adminHome") { TiendaUIAdmin(viewModel = viewModel, navController = navController) }
+                // Agrega esta línea dentro de NavHost en MainActivity
+                composable("RegistroDeCompra") { BoughtItems(navController, viewModel) }
+
             }
         }
     }
@@ -195,7 +198,7 @@ fun setDrawerContent(rol: String): List<NavigationItem> {
                 title = "Registro de compra",
                 selectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
                 unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
-                route = "adminHome"
+                route = "RegistroDeCompra"
             ),
             NavigationItem(
                 title = "Vender Producto",
@@ -252,7 +255,7 @@ fun setDrawerContent(rol: String): List<NavigationItem> {
                 title = "Registro de compra",
                 selectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
                 unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
-                route = "home"
+                route = "RegistroDeCompra"
             ),
             NavigationItem(
                 title = "Vender Producto",

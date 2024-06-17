@@ -23,7 +23,7 @@ import androidx.navigation.NavController
 import com.bitlegion.encantoartesano.R
 
 @Composable
-fun ProductRegistration() {
+fun ProductRegistration(navController: NavController) {
     var productName by remember { mutableStateOf("") }
     var productPrice by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
@@ -34,7 +34,7 @@ fun ProductRegistration() {
             .background(Color(0xFF2B7A78))
             .padding(16.dp)
     ) {
-        IconButton(onClick = { /*navController.popBackStack()*/ }) {
+        IconButton(onClick = { navController.navigate("home") }) {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_chevron_left_24),
                 contentDescription = null,
@@ -85,9 +85,9 @@ fun ProductRegistration() {
                 color = Color.Black,
                 fontWeight = FontWeight.Bold)
         }
-
     }
 }
+
 
 @Composable
 fun ProductDetails(label: String, value: String) {
@@ -116,9 +116,9 @@ fun ProductDetails(label: String, value: String) {
         )
     }
 }
-
+/*
 @Preview
 @Composable
 fun ProductRegistrationPreview() {
     ProductRegistration()
-}
+}*/
