@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
                             drawerState = viewModel.drawerState,
                             drawerContent = {
                                 //El contenido del Drawer se controla mediante esta función dependiendo el rol del usuario
-                                val items = setDrawerContent(rol = "admin")//admin o user
+                                val items = setDrawerContent(rol = "user")//admin o user
 
                                 var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
                                 ModalDrawerSheet(drawerContainerColor = LightPink) {

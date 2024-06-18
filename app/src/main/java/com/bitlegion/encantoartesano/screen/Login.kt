@@ -3,7 +3,6 @@ package com.bitlegion.encantoartesano.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,24 +14,22 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.bitlegion.encantoartesano.Api.ApiClient
+import com.bitlegion.encantoartesano.Api.LoginRequest
 import com.bitlegion.encantoartesano.R
-import com.bitlegion.encantoartesano.ui.theme.Aqua
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
-    val adminUser = "admin"
-    val adminPass = "admin123"
-    val normalUser = "user"
-    val normalPass = "user123"
-
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Aqua),
+            .background(Color(0xFF15746E)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -123,10 +120,13 @@ fun LoginScreen(navController: NavHostController) {
 
         Button(
             onClick = {
-                when {
-                    username == adminUser && password == adminPass -> navController.navigate("home")
-                    username == normalUser && password == normalPass -> navController.navigate("home")
-                    else -> errorMessage = "Usuario o contraseña incorrectos"
+                scope.launch {
+                    val response = ApiClient.apiService.loginUser(LoginRequest(username, password))
+                    if (response.isSuccessful) {
+                        navController.navigate("home")
+                    } else {
+                        errorMessage = "Usuario o contraseña incorrectos"
+                    }
                 }
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0XFFE19390)),
@@ -149,4 +149,5 @@ fun LoginScreen(navController: NavHostController) {
         }
     }
 }
+
 

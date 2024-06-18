@@ -3,7 +3,6 @@ package com.bitlegion.encantoartesano.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -16,15 +15,24 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.bitlegion.encantoartesano.Api.ApiClient
+import com.bitlegion.encantoartesano.Api.User
 import com.bitlegion.encantoartesano.R
-import com.bitlegion.encantoartesano.ui.theme.Aqua
+
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(navController: NavHostController) {
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var age by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Aqua),
+            .background(Color(0xFF15746E)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
     ) {
@@ -57,10 +65,6 @@ fun RegisterScreen(navController: NavHostController) {
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        var username by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
-        var age by remember { mutableStateOf("") }
 
         OutlinedTextField(
             value = username,
@@ -156,13 +160,28 @@ fun RegisterScreen(navController: NavHostController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { /* Acción de creación de cuenta */ },
+            onClick = {
+                scope.launch {
+                    val user = User(username, password, age.toInt())
+                    val response = ApiClient.apiService.registerUser(user)
+                    if (response.isSuccessful) {
+                        navController.navigate("login")
+                    } else {
+                        errorMessage = "Error al crear la cuenta"
+                    }
+                }
+            },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFD26059)),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp)
         ) {
             Text(text = "Crear Cuenta", color = Color.White)
+        }
+
+        if (errorMessage.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = errorMessage, color = Color.Red)
         }
 
         Spacer(modifier = Modifier.height(8.dp))
