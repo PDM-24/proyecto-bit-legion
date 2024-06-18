@@ -24,7 +24,26 @@ fun LoginScreen(navController: NavHostController) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
+    var isUsernameValid by remember { mutableStateOf(false) }
+    var isUsernameChecked by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+
+    val checkUsername: suspend () -> Unit = {
+        val response = ApiClient.apiService.checkUsername(username)
+        if (response.isSuccessful) {
+            val usernameCheckResponse = response.body()
+            isUsernameValid = usernameCheckResponse?.exists == true
+        } else {
+            isUsernameValid = false
+        }
+        isUsernameChecked = true
+    }
+
+    LaunchedEffect(username) {
+        if (username.isNotBlank()) {
+            checkUsername()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -69,7 +88,7 @@ fun LoginScreen(navController: NavHostController) {
 
         OutlinedTextField(
             value = username,
-            onValueChange = { username = it },
+            onValueChange = { username = it; isUsernameChecked = false },
             label = { Text("Usuario") },
             singleLine = true,
             modifier = Modifier
@@ -77,15 +96,23 @@ fun LoginScreen(navController: NavHostController) {
                 .padding(horizontal = 32.dp),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 backgroundColor = Color(0xFFE8DED1),
-                focusedBorderColor = Color.Red,
+                focusedBorderColor = Color.Gray,
                 unfocusedBorderColor = Color.Gray
             ),
             trailingIcon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_check_24),
-                    contentDescription = null,
-                    tint = Color.Red
-                )
+                if (isUsernameChecked) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_check_24),
+                        contentDescription = null,
+                        tint = if (isUsernameValid) Color.Green else Color.Red
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_check_24),
+                        contentDescription = null,
+                        tint = Color.Red
+                    )
+                }
             }
         )
 

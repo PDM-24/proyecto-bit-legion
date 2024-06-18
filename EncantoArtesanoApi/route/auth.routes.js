@@ -74,3 +74,19 @@ router.get('/getUser/:id', async (req, res) =>{
   });
 
 module.exports = router
+
+// Verificar si el nombre de usuario ya existe
+router.get('/checkUsername/:username', async (req, res) => {
+    const { username } = req.params;
+
+    try {
+        const user = await User.findOne({ username: username });
+        if (user) {
+            res.status(200).json({ exists: true });
+        } else {
+            res.status(200).json({ exists: false });
+        }
+    } catch (error) {
+        res.status(400).json({ result: error.message });
+    }
+});

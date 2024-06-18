@@ -18,7 +18,6 @@ import androidx.navigation.NavHostController
 import com.bitlegion.encantoartesano.Api.ApiClient
 import com.bitlegion.encantoartesano.Api.User
 import com.bitlegion.encantoartesano.R
-
 import kotlinx.coroutines.launch
 
 @Composable
@@ -28,6 +27,33 @@ fun RegisterScreen(navController: NavHostController) {
     var age by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
+    var isUsernameValid by remember { mutableStateOf(false) }
+    var isPasswordValid by remember { mutableStateOf(false) }
+    var isAgeValid by remember { mutableStateOf(false) }
+    var isUsernameChecked by remember { mutableStateOf(false) }
+
+    val checkUsername: suspend () -> Unit = {
+        val response = ApiClient.apiService.checkUsername(username)
+        isUsernameValid = response.isSuccessful && response.body()?.exists == false
+        isUsernameChecked = true
+    }
+
+    fun checkPassword() {
+        isPasswordValid = password.length >= 8 &&
+                password.any { it.isUpperCase() } &&
+                password.any { it.isLowerCase() } &&
+                password.any { it.isDigit() }
+    }
+
+    fun checkAge() {
+        isAgeValid = age.toIntOrNull()?.let { it >= 18 } ?: false
+    }
+
+    LaunchedEffect(username) {
+        if (username.isNotBlank()) {
+            checkUsername()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -68,7 +94,7 @@ fun RegisterScreen(navController: NavHostController) {
 
         OutlinedTextField(
             value = username,
-            onValueChange = { username = it },
+            onValueChange = { username = it; isUsernameChecked = false },
             label = { Text("Nombre de Usuario") },
             singleLine = true,
             modifier = Modifier
@@ -76,14 +102,18 @@ fun RegisterScreen(navController: NavHostController) {
                 .padding(horizontal = 32.dp),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 backgroundColor = Color(0xFFD1C8B8),
-                focusedBorderColor = Color.Red,
+                focusedBorderColor = Color.Gray,
                 unfocusedBorderColor = Color.Gray
             ),
             trailingIcon = {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_check_24),
                     contentDescription = null,
-                    tint = Color.Red
+                    tint = if (isUsernameChecked) {
+                        if (isUsernameValid) Color.Green else Color.Red
+                    } else {
+                        Color.Red
+                    }
                 )
             }
         )
@@ -100,7 +130,7 @@ fun RegisterScreen(navController: NavHostController) {
 
         OutlinedTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = { password = it; checkPassword() },
             label = { Text("Contraseña") },
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
@@ -112,7 +142,14 @@ fun RegisterScreen(navController: NavHostController) {
                 backgroundColor = Color(0xFFD1C8B8),
                 focusedBorderColor = Color.Gray,
                 unfocusedBorderColor = Color.Gray
-            )
+            ),
+            trailingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_check_24),
+                    contentDescription = null,
+                    tint = if (isPasswordValid) Color.Green else Color.Red
+                )
+            }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -127,7 +164,7 @@ fun RegisterScreen(navController: NavHostController) {
 
         OutlinedTextField(
             value = age,
-            onValueChange = { age = it },
+            onValueChange = { age = it; checkAge() },
             label = { Text("Edad") },
             placeholder = { Text("Introduce tu edad") },
             singleLine = true,
@@ -144,7 +181,7 @@ fun RegisterScreen(navController: NavHostController) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_check_24),
                     contentDescription = null,
-                    tint = Color.Red
+                    tint = if (isAgeValid) Color.Green else Color.Red
                 )
             }
         )
@@ -162,16 +199,20 @@ fun RegisterScreen(navController: NavHostController) {
         Button(
             onClick = {
                 scope.launch {
-                    val user = User(username, password, age.toInt())
-                    val response = ApiClient.apiService.registerUser(user)
-                    if (response.isSuccessful) {
-                        navController.navigate("login")
-                    } else {
-                        errorMessage = "Error al crear la cuenta"
+                    checkUsername()
+                    if (isUsernameValid && isPasswordValid && isAgeValid) {
+                        val user = User(username, password, age.toInt())
+                        val response = ApiClient.apiService.registerUser(user)
+                        if (response.isSuccessful) {
+                            navController.navigate("login")
+                        } else {
+                            errorMessage = "Error al crear la cuenta"
+                        }
                     }
                 }
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFD26059)),
+            enabled = isUsernameChecked && isUsernameValid && isPasswordValid && isAgeValid,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp)
@@ -191,5 +232,3 @@ fun RegisterScreen(navController: NavHostController) {
         }
     }
 }
-
-
