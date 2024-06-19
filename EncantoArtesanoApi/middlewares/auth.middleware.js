@@ -69,7 +69,7 @@ middlewares.authorization = (roleRequired = ROLES.SYSADMIN) => {
         const {rol = []} = req.user;
         //Se verifica que el rol requerido este en la colección
         const isAuth = rol.includes(roleRequired);
-        const isSysAdmin = rol.includes(ROLES.SYSADMIN);
+        const isSysAdmin = rol.includes(ROLES.ADMIN);
   
         //Si el rol no se encuentra o no es SYSADMIN se devuelve error
         if(!isAuth && !isSysAdmin){

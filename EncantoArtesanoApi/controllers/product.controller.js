@@ -118,5 +118,74 @@ controller.ShoppedToggleProduct = async (req, res, next) => {
     }
 }
 
+controller.findOnCartProducts = async (req, res, next) => {
+    try{
+        const user =
+        await (req.user)
+        .populate({
+            path: "onCartProducts",
+            populate: [
+                {
+                    path: "user",
+                    select: "username"
+                }
+               
+            ]
+        });
+    
+        return res.status(200).json({posts: user["onCartProducts"]});
+
+    }
+    catch(error){
+        next(error);
+    }
+}
+
+controller.findLikes = async (req, res, next) => {
+    try{
+        const user =
+        await (req.user)
+        .populate({
+            path: "likedProducts",
+            populate: [
+                {
+                    path: "user",
+                    select: "username"
+                }
+               
+            ]
+        });
+    
+        return res.status(200).json({posts: user["likedProducts"]});
+
+    }
+    catch(error){
+        next(error);
+    }
+}
+
+controller.findShopped = async (req, res, next) => {
+    try{
+        const user =
+        await (req.user)
+        .populate({
+            path: "shoppedProducts",
+            populate: [
+                {
+                    path: "user",
+                    select: "username"
+                }
+               
+            ]
+        });
+    
+        return res.status(200).json({posts: user["shoppedProducts"]});
+
+    }
+    catch(error){
+        next(error);
+    }
+}
+
 
 module.exports = controller;

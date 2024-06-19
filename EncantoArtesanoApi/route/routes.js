@@ -113,6 +113,28 @@ router.patch("/onCart/:id",
     productController.onCartToggleProduct
 );
 
+//Obtener los productos en el carrito
+router.get("/getOnCart",
+    authentication,
+    authorization(ROLES.USER),
+    productController.findOnCartProducts
+    );
+
+    //Obtener los productos que tiene likes del usuario
+router.get("/getLikes",
+    authentication,
+    authorization(ROLES.USER),
+    productController.findLikes
+    );
+
+    //Obtener los productos comprados por el usuario
+router.get("/getShopped",
+    authentication,
+    authorization(ROLES.USER),
+    productController.findShopped
+    );
+    
+
 //Like/Dislike a productos
 router.patch("/like/:id",
     authentication,
