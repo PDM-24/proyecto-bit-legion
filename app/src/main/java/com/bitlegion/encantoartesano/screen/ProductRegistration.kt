@@ -19,13 +19,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
 import com.bitlegion.encantoartesano.Api.ApiClient
 import com.bitlegion.encantoartesano.Api.Product
 import com.bitlegion.encantoartesano.R
 import kotlinx.coroutines.launch
 import android.widget.Toast
 import androidx.compose.ui.res.painterResource
+import coil.compose.rememberAsyncImagePainter
 import java.util.Date
 
 @Composable

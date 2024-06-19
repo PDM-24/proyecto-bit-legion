@@ -1,6 +1,7 @@
 package com.bitlegion.encantoartesano.screen
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -17,17 +18,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.bitlegion.encantoartesano.Api.ApiClient
 import com.bitlegion.encantoartesano.Api.LoginRequest
+import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(navController: NavHostController, context: Context) {
+fun LoginScreen(navController: NavHostController, context: Context, viewModel: MainViewModel) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
     var isUsernameValid by remember { mutableStateOf(false) }
     var isUsernameChecked by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+
 
     val checkUsername: suspend () -> Unit = {
         val response = ApiClient.apiService.checkUsername(username)
@@ -149,15 +152,34 @@ fun LoginScreen(navController: NavHostController, context: Context) {
         Button(
             onClick = {
                 scope.launch {
+                    val sharedPreferences = context.getSharedPreferences("encanto_artesano_prefs", Context.MODE_PRIVATE)
+
+                    // Eliminar las variables guardadas anteriormente
+                    with(sharedPreferences.edit()) {
+                        remove("user_id")
+                        remove("user_rol")
+                        apply()
+                    }
+
+                    // Realizar la llamada a la API para el inicio de sesión
                     val response = ApiClient.apiService.loginUser(LoginRequest(username, password))
                     if (response.isSuccessful) {
                         val loginResponse = response.body()
-                        val sharedPreferences = context.getSharedPreferences("encanto_artesano_prefs", Context.MODE_PRIVATE)
+
+                        // Guardar las nuevas variables en SharedPreferences
                         with(sharedPreferences.edit()) {
                             putString("user_id", loginResponse?.userId)
+                            putString("user_rol", loginResponse?.userRol)
                             apply()
                         }
-                        navController.navigate("home")
+                        viewModel.updateUserRole(loginResponse?.userRol)
+
+                        // Navegar según el rol del usuario
+                        if (loginResponse?.userRol.equals("admin")) {
+                            navController.navigate("adminHome")
+                        } else {
+                            navController.navigate("home")
+                        }
                     } else {
                         errorMessage = "Usuario o contraseña incorrectos"
                     }
@@ -170,6 +192,7 @@ fun LoginScreen(navController: NavHostController, context: Context) {
         ) {
             Text(text = "Iniciar Sesión", color = Color.White)
         }
+
 
         if (errorMessage.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))

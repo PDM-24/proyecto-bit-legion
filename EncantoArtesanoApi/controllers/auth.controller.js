@@ -41,6 +41,39 @@ controller.register = async (req, res, next) => {
     }
   }
 
+  controller.registerAdmin = async (req, res, next) => {
+    try {
+      //Obtener la info 
+
+      const{id}=req.params; 
+
+      const {username, password, edad } = req.body;
+      
+      //Verificar la existencia del correo y el user
+      const user = 
+          await User.findOne({ $or: [{username: username}] });
+
+      const uniqueId = await User.findOne({$and: [{username: username}, {_id: id}]})
+  
+      if(user && !uniqueId){
+          return res.status(409).json({ error: "User Already Exists" });
+      }
+      //Si no exsite lo creamos
+      const newUser = new User({
+          username: username,
+          password: password,
+          edad: edad,
+          rol: ROLES.ADMIN
+      })
+  
+      await newUser.save();
+  
+      return res.status(201).json({ message: "User Created Successfully" });
+    } catch (error) {
+      next(error);
+    
+    }
+  }
   
 controller.update = async (req, res, next) => {
   try {
@@ -128,7 +161,7 @@ controller.login = async (req, res, next) => {
 
     //Devolver toke
     
-    return res.status(200).json({ token, userId: user._id });
+    return res.status(200).json({ token, userId: user._id, userRol: user.rol });
   } catch (error) {
     next(error);
   }

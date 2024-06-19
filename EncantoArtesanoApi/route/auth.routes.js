@@ -47,6 +47,13 @@ router.post(["/register"],
     authController.register
 );
 
+//Auth registro de usuario tipo Adminitrador
+router.post(["/registerAdmin"],
+    //registerValidator,
+     //runValidator,
+     authController.registerAdmin
+ );
+
 //Auth login
 router.post("/login", 
     authController.login);

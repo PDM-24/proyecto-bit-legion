@@ -3,6 +3,7 @@ package com.bitlegion.encantoartesano
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
@@ -33,7 +34,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.bitlegion.encantoartesano.screen.*
@@ -43,6 +43,8 @@ import com.bitlegion.encantoartesano.ui.theme.LightPink
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.compose.ui.platform.LocalContext
+import kotlin.math.log
+
 data class NavigationItem(
     val title: String,
     val selectedIcon: ImageVector,
@@ -53,15 +55,19 @@ data class NavigationItem(
 
 
 class MainActivity : ComponentActivity() {
+
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContent {
             val viewModel: MainViewModel = viewModel()
             val localScope = rememberCoroutineScope()
             var currentRoute by remember { mutableStateOf<String?>(null) }
             val context = LocalContext.current
+            val sharedPreferences = context.getSharedPreferences("encanto_artesano_prefs", Context.MODE_PRIVATE)
+            val userRol = sharedPreferences.getString("user_rol", null)
 
             EncantoArtesanoTheme {
                 val navController = rememberNavController()
@@ -79,7 +85,8 @@ class MainActivity : ComponentActivity() {
                         ModalNavigationDrawer(
                             drawerState = viewModel.drawerState,
                             drawerContent = {
-                                val items = setDrawerContent(rol = "user")
+                                val items = setDrawerContent(rol = viewModel.userRole.value)
+
 
                                 var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
                                 ModalDrawerSheet(drawerContainerColor = LightPink) {
@@ -105,6 +112,7 @@ class MainActivity : ComponentActivity() {
                                                     }
                                                 }
                                                 navController.navigate(item.route)
+
                                             },
                                             icon = {
                                                 Icon(
@@ -141,10 +149,16 @@ class MainActivity : ComponentActivity() {
         val sharedPreferences = context.getSharedPreferences("encanto_artesano_prefs", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getString("user_id", null)
 
+        // Actualizar el estado del ViewModel con los valores actuales de SharedPreferences
+        LaunchedEffect(Unit) {
+            viewModel.updateUserRole(sharedPreferences.getString("user_rol", null))
+        }
+
+
         Scaffold {
 
             NavHost(navController = navController, startDestination = "login") {
-                composable("login") { LoginScreen(navController, context) }
+                composable("login") { LoginScreen(navController, context, viewModel) }
                 composable("home") { TiendaUI(viewModel, navController) }
                 composable("register") { RegisterScreen(navController) }
                 composable(
@@ -173,7 +187,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun setDrawerContent(rol: String): List<NavigationItem> {
+fun setDrawerContent(rol: String?): List<NavigationItem> {
     return if (rol == "admin") {
         listOf(
             NavigationItem(
