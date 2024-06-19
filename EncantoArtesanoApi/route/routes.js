@@ -13,15 +13,17 @@ const validateFields = require("../validators/index.validator");
 
 //Insert Product: POST
 router.post('/postProduct', async (req, res) =>{
+    console.log('Received POST request at /postProduct');
+    console.log('Request body:', req.body);
 
     const data = new Model({
         nombre: req.body.nombre,
         descripcion: req.body.descripcion,
         precio: req.body.precio,
         ubicacion: req.body.ubicacion,
-        calificacion: req.body.calificacion,
-        imagenes: req.body.imagenes,
-        fecha: req.body.fecha,
+        calificacion: req.body.calificacion || 0, // Valor por defecto
+        imagenes: req.body.imagenes || [], // Valor por defecto
+        fecha: req.body.fecha || new Date(), // Valor por defecto
         user: req.body.user
     })
 
@@ -30,6 +32,7 @@ router.post('/postProduct', async (req, res) =>{
         res.status(200).json({"result": "ok"})
     }
     catch(error){
+        console.error('Error saving product:', error.message);
         res.status(400).json({"result": error.message})
     }
 

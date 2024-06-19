@@ -1,6 +1,7 @@
 package com.bitlegion.encantoartesano
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -41,7 +42,7 @@ import com.bitlegion.encantoartesano.ui.theme.EncantoArtesanoTheme
 import com.bitlegion.encantoartesano.ui.theme.LightPink
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
+import androidx.compose.ui.platform.LocalContext
 data class NavigationItem(
     val title: String,
     val selectedIcon: ImageVector,
@@ -50,8 +51,8 @@ data class NavigationItem(
     val route: String
 )
 
-class MainActivity : ComponentActivity() {
 
+class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +61,7 @@ class MainActivity : ComponentActivity() {
             val viewModel: MainViewModel = viewModel()
             val localScope = rememberCoroutineScope()
             var currentRoute by remember { mutableStateOf<String?>(null) }
+            val context = LocalContext.current
 
             EncantoArtesanoTheme {
                 val navController = rememberNavController()
@@ -77,8 +79,7 @@ class MainActivity : ComponentActivity() {
                         ModalNavigationDrawer(
                             drawerState = viewModel.drawerState,
                             drawerContent = {
-                                //El contenido del Drawer se controla mediante esta función dependiendo el rol del usuario
-                                val items = setDrawerContent(rol = "user")//admin o user
+                                val items = setDrawerContent(rol = "user")
 
                                 var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
                                 ModalDrawerSheet(drawerContainerColor = LightPink) {
@@ -123,11 +124,11 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         ) {
-                            AppContent(navController, viewModel)
+                            AppContent(navController, viewModel, context)
                         }
 
                     } else {
-                        AppContent(navController, viewModel)
+                        AppContent(navController, viewModel, context)
                     }
                 }
             }
@@ -136,11 +137,14 @@ class MainActivity : ComponentActivity() {
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @Composable
-    fun AppContent(navController: NavHostController, viewModel: MainViewModel) {
+    fun AppContent(navController: NavHostController, viewModel: MainViewModel, context: Context) {
+        val sharedPreferences = context.getSharedPreferences("encanto_artesano_prefs", Context.MODE_PRIVATE)
+        val userId = sharedPreferences.getString("user_id", null)
+
         Scaffold {
 
             NavHost(navController = navController, startDestination = "login") {
-                composable("login") { LoginScreen(navController) }
+                composable("login") { LoginScreen(navController, context) }
                 composable("home") { TiendaUI(viewModel, navController) }
                 composable("register") { RegisterScreen(navController) }
                 composable(
@@ -151,25 +155,22 @@ class MainActivity : ComponentActivity() {
                     ProductDetailScreen(navController, productName, viewModel)
                 }
                 composable("perfil") { PerfilScreen(navController) }
-                composable("edit_profile") { EditProfileScreen(navController) }  // Nueva ruta para EditProfileScreen
-                composable("seller_profile") { SellerProfileScreen(navController) }  // Añadir esta ruta
+                composable("edit_profile") { EditProfileScreen(navController) }
+                composable("seller_profile") { SellerProfileScreen(navController) }
                 composable("cart") { ShoppingCartScreen(navController, viewModel) }
                 composable("favorites") { FavUI(viewModel) }
                 composable("pay") { PaymentScreen(navController) }
-                composable("vender") { ProductRegistration(navController) }
+                composable("vender") { ProductRegistration(navController, context, userId ?: "") }
+
                 composable("adminHome") { TiendaUIAdmin(viewModel = viewModel, navController = navController) }
-                // Agrega esta línea dentro de NavHost en MainActivity
                 composable("RegistroDeCompra") { BoughtItems(navController, viewModel) }
-                // Dentro de NavHost en la función AppContent
                 composable("active_users") { ActiveUsers() }
                 composable("account_deletion") { AccountDeletion(navController) }
-
-
-
             }
         }
     }
 }
+
 
 @Composable
 fun setDrawerContent(rol: String): List<NavigationItem> {

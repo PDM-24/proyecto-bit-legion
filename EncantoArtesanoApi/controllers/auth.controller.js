@@ -128,11 +128,11 @@ controller.login = async (req, res, next) => {
 
     //Devolver toke
     
-    return res.status(200).json({ token })
+    return res.status(200).json({ token, userId: user._id });
   } catch (error) {
     next(error);
   }
-}
+};
 
 controller.whoami = async (req, res, next) =>{
   try{

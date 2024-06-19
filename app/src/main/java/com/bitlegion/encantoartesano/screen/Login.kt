@@ -1,5 +1,6 @@
 package com.bitlegion.encantoartesano.screen
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,7 +21,7 @@ import com.bitlegion.encantoartesano.R
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
+fun LoginScreen(navController: NavHostController, context: Context) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
@@ -150,6 +151,12 @@ fun LoginScreen(navController: NavHostController) {
                 scope.launch {
                     val response = ApiClient.apiService.loginUser(LoginRequest(username, password))
                     if (response.isSuccessful) {
+                        val loginResponse = response.body()
+                        val sharedPreferences = context.getSharedPreferences("encanto_artesano_prefs", Context.MODE_PRIVATE)
+                        with(sharedPreferences.edit()) {
+                            putString("user_id", loginResponse?.userId)
+                            apply()
+                        }
                         navController.navigate("home")
                     } else {
                         errorMessage = "Usuario o contraseña incorrectos"
@@ -176,5 +183,6 @@ fun LoginScreen(navController: NavHostController) {
         }
     }
 }
+
 
 

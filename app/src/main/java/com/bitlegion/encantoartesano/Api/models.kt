@@ -1,9 +1,5 @@
 package com.bitlegion.encantoartesano.Api
 
-
-
-
-
 data class User(
     val username: String,
     val password: String,
@@ -16,6 +12,9 @@ data class LoginRequest(
 )
 
 data class LoginResponse(
-    val token: String
+    val token: String,
+    val userId: String
 )
+
+
 

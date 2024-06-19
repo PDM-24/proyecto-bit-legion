@@ -1,32 +1,45 @@
 package com.bitlegion.encantoartesano.screen
 
-import androidx.compose.foundation.BorderStroke
+import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import com.bitlegion.encantoartesano.Api.ApiClient
+import com.bitlegion.encantoartesano.Api.Product
 import com.bitlegion.encantoartesano.R
+import kotlinx.coroutines.launch
+import android.widget.Toast
+import androidx.compose.ui.res.painterResource
+import java.util.Date
 
 @Composable
-fun ProductRegistration(navController: NavController) {
+fun ProductRegistration(navController: NavController, context: Context, userId: String) {
     var productName by remember { mutableStateOf("") }
     var productPrice by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        imageUri = uri
+    }
 
     Column(
         modifier = Modifier
@@ -50,9 +63,11 @@ fun ProductRegistration(navController: NavController) {
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Spacer(modifier = Modifier.height(40.dp))
-        ProductDetails(label = "Nombre del producto", value = productName)
+        ProductDetails(label = "Nombre del producto", value = productName, onValueChange = { productName = it })
         Spacer(modifier = Modifier.height(16.dp))
-        ProductDetails(label = "Precio", value = productPrice)
+        ProductDetails(label = "Precio", value = productPrice, onValueChange = { productPrice = it })
+        Spacer(modifier = Modifier.height(16.dp))
+        ProductDetails(label = "Descripción", value = description, onValueChange = { description = it })
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = "Imagen del Producto",
@@ -64,33 +79,60 @@ fun ProductRegistration(navController: NavController) {
         Card(
             shape = RoundedCornerShape(8.dp),
             backgroundColor = Color(0xFFD0CFBC),
-            border = BorderStroke(1.dp, Color.Black),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp)
-        ) {}
+                .clickable { launcher.launch("image/*") }
+        ) {
+            if (imageUri != null) {
+                Image(
+                    painter = rememberAsyncImagePainter(imageUri),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = "Seleccionar Imagen", color = Color.Black)
+                }
+            }
+        }
         Spacer(modifier = Modifier.height(16.dp))
-        ProductDetails(label = "Ubicación", value = location)
-
+        ProductDetails(label = "Ubicación", value = location, onValueChange = { location = it })
         Spacer(modifier = Modifier.height(40.dp))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                coroutineScope.launch {
+                    val product = Product(
+                        nombre = productName,
+                        descripcion = description,
+                        precio = productPrice.toDoubleOrNull() ?: 0.0,
+                        ubicacion = location,
+                        imagenes = listOf(imageUri.toString()),
+                        fecha = Date(),
+                        user = userId
+                    )
+                    val response = ApiClient.apiService.postProduct(product)
+                    if (response.isSuccessful) {
+                        navController.navigate("home")
+                        Toast.makeText(context, "Producto publicado", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "Error al publicar el producto", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFE19390)),
             shape = RoundedCornerShape(16.dp),
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
-            Text(
-                text = "Publicar",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold)
+            Text(text = "Publicar", color = Color.Black, fontWeight = FontWeight.Bold)
         }
     }
 }
 
 
 @Composable
-fun ProductDetails(label: String, value: String) {
+fun ProductDetails(label: String, value: String, onValueChange: (String) -> Unit) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = label,
@@ -101,7 +143,7 @@ fun ProductDetails(label: String, value: String) {
         Spacer(modifier = Modifier.height(8.dp))
         OutlinedTextField(
             value = value,
-            onValueChange = {},
+            onValueChange = onValueChange,
             singleLine = true,
             modifier = Modifier
                 .fillMaxWidth()
@@ -116,9 +158,4 @@ fun ProductDetails(label: String, value: String) {
         )
     }
 }
-/*
-@Preview
-@Composable
-fun ProductRegistrationPreview() {
-    ProductRegistration()
-}*/
+

@@ -26,7 +26,7 @@ const dataSchema = new Mongoose.Schema(
         },
         calificacion:{
             type: Number,
-            required: true,
+            default: 0
         },
         imagenes: {
             type: [String],
@@ -36,12 +36,12 @@ const dataSchema = new Mongoose.Schema(
         },
         fecha: {
             type: Date,
-            required: true,
-            trim: true
+            default: Date.now
         },
         user: {
             type: Mongoose.Schema.Types.ObjectId,
             ref: "user",
+            required: true
          // No requerido solo para pruebas
          //   required: true
         },

@@ -1,108 +1,94 @@
 package com.bitlegion.encantoartesano.screen
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
+import com.bitlegion.encantoartesano.Api.ApiClient
+import com.bitlegion.encantoartesano.Api.Product
 import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
 import com.bitlegion.encantoartesano.component.Header
-import com.bitlegion.encantoartesano.ui.theme.Aqua
-import com.bitlegion.encantoartesano.ui.theme.grayWhite
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-data class Producto(
-    val nombre: String,
-    val descripcion: String,
-    val precio: String
-)
-
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TiendaUI(viewModel: MainViewModel, navController: NavHostController) {
+    var productos by remember { mutableStateOf(emptyList<Product>()) }
+    val coroutineScope = rememberCoroutineScope()
 
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            val response = ApiClient.apiService.getAllProducts()
+            if (response.isSuccessful) {
+                productos = response.body() ?: emptyList()
+            } else {
+                // Manejar error
+            }
+        }
+    }
 
-    val productos = listOf(
-        Producto("Nombre Producto 1", "Descripción del producto 1", "$25"),
-        Producto("Nombre Producto 2", "Descripción del producto 2", "$30"),
-        Producto("Nombre Producto 3", "Descripción del producto 3", "$20"),
-        Producto("Nombre Producto 4", "Descripción del producto 4", "$15"),
-        Producto("Nombre Producto 5", "Descripción del producto 5", "$15"),
-    )
-
-    LazyColumn(
+    Column(
         modifier = Modifier
-            .background(color = grayWhite)
+            .background(color = Color(0xFFD0CFBC))
             .fillMaxSize()
     ) {
         // Barra de búsqueda
-        item {
-            Header(viewModel)
-        }
+        Header(viewModel)
 
-        item{
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Productos Destacados",
-                style = MaterialTheme.typography.bodySmall.copy(Color.Black),
-                fontWeight = FontWeight.Bold,
-                fontSize = 15.sp,
-                modifier = Modifier.padding(8.dp)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Productos Destacados",
+            style = MaterialTheme.typography.bodySmall.copy(Color.Black),
+            fontWeight = FontWeight.Bold,
+            fontSize = 15.sp,
+            modifier = Modifier.padding(8.dp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
 
-        }
-
-
-        item{
-            FlowRow {
-                // Lista de productos
-                productos.forEach { producto ->
-                    ProductoCard(producto, navController)
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier
+                .background(color = Color(0xFFD0CFBC))
+                .fillMaxSize(),
+            contentPadding = PaddingValues(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(productos) { producto ->
+                ProductoCard(producto, navController)
             }
         }
-
     }
 }
 
 @Composable
-fun ProductoCard(producto: Producto, navController: NavHostController) {
+fun ProductoCard(producto: Product, navController: NavHostController) {
     var isFavorite by remember { mutableStateOf(false) }
-
 
     Card(
         modifier = Modifier
-            .fillMaxWidth(0.5f)
-            .fillMaxHeight(0.5f)
-            .padding(8.dp)
+            .fillMaxWidth()
             .clickable { navController.navigate("detail/${producto.nombre}") },
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         shape = RoundedCornerShape(8.dp)
     ) {
         Column(
@@ -113,43 +99,45 @@ fun ProductoCard(producto: Producto, navController: NavHostController) {
             verticalArrangement = Arrangement.SpaceAround
         ) {
             Image(
-                painter = painterResource(id = R.drawable.jarron), contentDescription = "Background image",
-                Modifier
+                painter = rememberAsyncImagePainter(producto.imagenes.firstOrNull()),
+                contentDescription = null,
+                modifier = Modifier
                     .width(110.dp)
-                    .height(110.dp)
+                    .height(110.dp),
+                contentScale = ContentScale.Crop
             )
             Column(
                 modifier = Modifier
                     .padding(start = 2.dp)
                     .align(Alignment.Start),
-                verticalArrangement = Arrangement.spacedBy(7.dp)
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    producto.nombre, style = MaterialTheme.typography.titleMedium.copy(Color.Black), fontWeight = FontWeight.Bold
+                    text = producto.nombre,
+                    style = MaterialTheme.typography.titleMedium.copy(Color.Black),
+                    fontWeight = FontWeight.Bold
                 )
                 Text(
-                    producto.descripcion, style = MaterialTheme.typography.bodySmall.copy(Color.Black)
+                    text = producto.descripcion,
+                    style = MaterialTheme.typography.bodySmall.copy(Color.Black)
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        producto.precio, style = MaterialTheme.typography.titleMedium.copy(Color.Black)
+                        text = "${producto.precio} USD",
+                        style = MaterialTheme.typography.titleMedium.copy(Color.Black)
                     )
-                    Spacer(modifier = Modifier.width(105.dp))
+                    Spacer(modifier = Modifier.weight(1f))
                     IconButton(
-                        onClick = { isFavorite = !isFavorite  },
+                        onClick = { isFavorite = !isFavorite },
                         modifier = Modifier.size(30.dp),
-                        colors = IconButtonDefaults.iconButtonColors(containerColor = Aqua, contentColor = Color.White)
+                        colors = IconButtonDefaults.iconButtonColors(containerColor = Color(0xFF2B7A78), contentColor = Color.White)
                     ) {
-                        Icon(imageVector = Icons.Filled.Favorite,
-                            contentDescription = "Settings",
-                            tint = if (isFavorite) Color.Red else Color.White,
-                            modifier = Modifier.size(16.dp))
+                        Icon(imageVector = Icons.Default.Favorite, contentDescription = null, tint = if (isFavorite) Color.Red else Color.White)
                     }
                 }
             }
         }
     }
 }
-
