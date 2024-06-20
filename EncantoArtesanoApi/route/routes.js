@@ -186,6 +186,36 @@ router.patch("/onSale/:id",
     
 //Guardar datos de pago
 
+// Obtener productos por usuario
+router.get('/getUserProducts/:userId', async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const products = await Product.find({ user: userId });
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(400).json({ "result": error.message });
+    }
+});
+
+// Rutas para actualizar la imagen de perfil
+router.patch('/updateProfilePicture/:id', async (req, res) => {
+    const { id } = req.params;
+    const { profilePicture } = req.body;
+
+    try {
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        user.profilePicture = profilePicture;
+        await user.save();
+        return res.status(200).json(user);
+    } catch (error) {
+        return res.status(400).json({ result: error.message });
+    }
+});
+
 
 
 module.exports = router;

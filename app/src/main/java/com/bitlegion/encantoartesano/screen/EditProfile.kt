@@ -22,13 +22,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.bitlegion.encantoartesano.Api.ApiClient
+import com.bitlegion.encantoartesano.Api.User
+import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
+import kotlinx.coroutines.launch
 
 @Composable
-fun EditProfileScreen(navController: NavController) {  // Cambié el nombre a EditProfileScreen
-    var name by remember { mutableStateOf("Jose Roberto") }
-    var password by remember { mutableStateOf("************") }
-    var age by remember { mutableStateOf("35") }
+fun EditProfileScreen(navController: NavController, viewModel: MainViewModel, userId: String) {
+    var name by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var age by remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -65,17 +70,7 @@ fun EditProfileScreen(navController: NavController) {  // Cambié el nombre a Ed
                     .clip(CircleShape),
                 contentScale = ContentScale.Crop
             )
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_camera_enhance_24),
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.BottomEnd)
-                    .offset(x = (-4).dp, y = (-4).dp)
-            )
         }
-
         Spacer(modifier = Modifier.height(16.dp))
         AccountEditable(label = "Nombre", value = name, onValueChange = { name = it })
         Spacer(modifier = Modifier.height(16.dp))
@@ -83,50 +78,16 @@ fun EditProfileScreen(navController: NavController) {  // Cambié el nombre a Ed
         Spacer(modifier = Modifier.height(16.dp))
         AgeEdit(label = "Edad", value = age, onValueChange = { age = it })
         Spacer(modifier = Modifier.height(32.dp))
-
-        Text(
-            text = "Productos en venta",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Card(
-            shape = RoundedCornerShape(8.dp),
-            backgroundColor = Color(0XFFD0CFCB),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-        ) {
-            Row(modifier = Modifier.padding(8.dp)) {
-                Image(
-                    painter = painterResource(id = R.drawable.jarron),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Column {
-                    Text(
-                        text = "Nombre Producto",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    )
-                    Text(
-                        text = "Descripción del Producto",
-                        fontSize = 14.sp,
-                        color = Color.Black
-                    )
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(20.dp))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                coroutineScope.launch {
+                    val updatedUser = User(name, password, age.toInt())
+                    val response = ApiClient.apiService.updateUser(userId, updatedUser)
+                    if (response.isSuccessful) {
+                        navController.popBackStack()
+                    }
+                }
+            },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFE19390)),
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -139,6 +100,7 @@ fun EditProfileScreen(navController: NavController) {  // Cambié el nombre a Ed
         }
     }
 }
+
 
 @Composable
 fun AccountEditable(label: String, value: String, onValueChange: (String) -> Unit) {
@@ -195,9 +157,9 @@ fun AgeEdit(label: String, value: String, onValueChange: (String) -> Unit) {
         )
     }
 }
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun PreviewEditProfile() {
     EditProfileScreen(navController = rememberNavController())
-}
+}*/

@@ -3,7 +3,8 @@ package com.bitlegion.encantoartesano.Api
 data class User(
     val username: String,
     val password: String,
-    val edad: Int
+    val edad: Int,
+    val profilePicture: String = ""
 )
 
 data class LoginRequest(

@@ -54,12 +54,12 @@ data class NavigationItem(
 )
 
 
+
+
+@OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
-
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContent {
             val viewModel: MainViewModel = viewModel()
@@ -86,8 +86,6 @@ class MainActivity : ComponentActivity() {
                             drawerState = viewModel.drawerState,
                             drawerContent = {
                                 val items = setDrawerContent(rol = viewModel.userRole.value)
-
-
                                 var selectedItemIndex by rememberSaveable { mutableStateOf(0) }
                                 ModalDrawerSheet(drawerContainerColor = LightPink) {
                                     items.forEachIndexed { index, item ->
@@ -105,14 +103,10 @@ class MainActivity : ComponentActivity() {
                                             selected = index == selectedItemIndex,
                                             onClick = {
                                                 selectedItemIndex = index
-
-                                                viewModel.coroutineScope.launch {
-                                                    withContext(localScope.coroutineContext) {
-                                                        viewModel.drawerState.close()
-                                                    }
+                                                localScope.launch {
+                                                    viewModel.drawerState.close()
                                                 }
                                                 navController.navigate(item.route)
-
                                             },
                                             icon = {
                                                 Icon(
@@ -134,7 +128,6 @@ class MainActivity : ComponentActivity() {
                         ) {
                             AppContent(navController, viewModel, context)
                         }
-
                     } else {
                         AppContent(navController, viewModel, context)
                     }
@@ -154,28 +147,22 @@ class MainActivity : ComponentActivity() {
             viewModel.updateUserRole(sharedPreferences.getString("user_rol", null))
         }
 
-
         Scaffold {
-
             NavHost(navController = navController, startDestination = "login") {
                 composable("login") { LoginScreen(navController, context, viewModel) }
                 composable("home") { TiendaUI(viewModel, navController) }
                 composable("register") { RegisterScreen(navController) }
-                composable(
-                    "detail/{productName}",
-                    arguments = listOf(navArgument("productName") { type = NavType.StringType })
-                ) { backStackEntry ->
+                composable("detail/{productName}") { backStackEntry ->
                     val productName = backStackEntry.arguments?.getString("productName") ?: ""
                     ProductDetailScreen(navController, productName, viewModel)
                 }
-                composable("perfil") { PerfilScreen(navController) }
-                composable("edit_profile") { EditProfileScreen(navController) }
+                composable("perfil") { PerfilScreen(navController, viewModel) }
+                composable("edit_profile") { EditProfileScreen(navController, viewModel, userId ?: "") }
                 composable("seller_profile") { SellerProfileScreen(navController) }
                 composable("cart") { ShoppingCartScreen(navController, viewModel) }
                 composable("favorites") { FavUI(viewModel) }
                 composable("pay") { PaymentScreen(navController) }
                 composable("vender") { ProductRegistration(navController, context, userId ?: "") }
-
                 composable("adminHome") { TiendaUIAdmin(viewModel = viewModel, navController = navController) }
                 composable("RegistroDeCompra") { BoughtItems(navController, viewModel) }
                 composable("active_users") { ActiveUsers() }
@@ -183,112 +170,111 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
-
-@Composable
-fun setDrawerContent(rol: String?): List<NavigationItem> {
-    return if (rol == "admin") {
-        listOf(
-            NavigationItem(
-                title = "Principal",
-                selectedIcon = Icons.Filled.Home,
-                unselectedIcon = Icons.Outlined.Home,
-                route = "adminHome"
-            ),
-            NavigationItem(
-                title = "Perfíl",
-                selectedIcon = Icons.Filled.AccountCircle,
-                unselectedIcon = Icons.Outlined.AccountCircle,
-                route = "perfil"
-            ),
-            NavigationItem(
-                title = "Carrito de compra",
-                selectedIcon = Icons.Filled.ShoppingCart,
-                unselectedIcon = Icons.Outlined.ShoppingCart,
-                route = "cart"
-            ),
-            NavigationItem(
-                title = "Favoritos",
-                selectedIcon = Icons.Filled.Favorite,
-                unselectedIcon = Icons.Outlined.Favorite,
-                route = "favorites"
-            ),
-            NavigationItem(
-                title = "Registro de compra",
-                selectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
-                unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
-                route = "RegistroDeCompra"
-            ),
-            NavigationItem(
-                title = "Vender Producto",
-                selectedIcon = ImageVector.vectorResource(R.drawable.baseline_sell_24),
-                unselectedIcon = ImageVector.vectorResource(R.drawable.outline_sell_24),
-                route = "vender"
-            ),
-            NavigationItem(
-                title = "Cuentas bloqueadas",
-                selectedIcon = Icons.Filled.Person,
-                unselectedIcon = Icons.Outlined.Person,
-                route = "account_deletion"
-            ),
-            NavigationItem(
-                title = "Administrar cuentas",
-                selectedIcon = Icons.Filled.AccountBox,
-                unselectedIcon = Icons.Outlined.AccountBox,
-                route = "active_users"
-            ),
-            NavigationItem(
-                title = "Cerrar Sesión",
-                selectedIcon = Icons.Outlined.ExitToApp,
-                unselectedIcon = Icons.Outlined.ExitToApp,
-                route = "login"
+    @Composable
+    fun setDrawerContent(rol: String?): List<NavigationItem> {
+        return if (rol == "admin") {
+            listOf(
+                NavigationItem(
+                    title = "Principal",
+                    selectedIcon = Icons.Filled.Home,
+                    unselectedIcon = Icons.Outlined.Home,
+                    route = "adminHome"
+                ),
+                NavigationItem(
+                    title = "Perfíl",
+                    selectedIcon = Icons.Filled.AccountCircle,
+                    unselectedIcon = Icons.Outlined.AccountCircle,
+                    route = "perfil"
+                ),
+                NavigationItem(
+                    title = "Carrito de compra",
+                    selectedIcon = Icons.Filled.ShoppingCart,
+                    unselectedIcon = Icons.Outlined.ShoppingCart,
+                    route = "cart"
+                ),
+                NavigationItem(
+                    title = "Favoritos",
+                    selectedIcon = Icons.Filled.Favorite,
+                    unselectedIcon = Icons.Outlined.Favorite,
+                    route = "favorites"
+                ),
+                NavigationItem(
+                    title = "Registro de compra",
+                    selectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
+                    unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
+                    route = "RegistroDeCompra"
+                ),
+                NavigationItem(
+                    title = "Vender Producto",
+                    selectedIcon = ImageVector.vectorResource(R.drawable.baseline_sell_24),
+                    unselectedIcon = ImageVector.vectorResource(R.drawable.outline_sell_24),
+                    route = "vender"
+                ),
+                NavigationItem(
+                    title = "Cuentas bloqueadas",
+                    selectedIcon = Icons.Filled.Person,
+                    unselectedIcon = Icons.Outlined.Person,
+                    route = "account_deletion"
+                ),
+                NavigationItem(
+                    title = "Administrar cuentas",
+                    selectedIcon = Icons.Filled.AccountBox,
+                    unselectedIcon = Icons.Outlined.AccountBox,
+                    route = "active_users"
+                ),
+                NavigationItem(
+                    title = "Cerrar Sesión",
+                    selectedIcon = Icons.Outlined.ExitToApp,
+                    unselectedIcon = Icons.Outlined.ExitToApp,
+                    route = "login"
+                )
             )
-        )
-    } else {
-        listOf(
-            NavigationItem(
-                title = "Principal",
-                selectedIcon = Icons.Filled.Home,
-                unselectedIcon = Icons.Outlined.Home,
-                route = "home"
-            ),
-            NavigationItem(
-                title = "Perfíl",
-                selectedIcon = Icons.Filled.AccountCircle,
-                unselectedIcon = Icons.Outlined.AccountCircle,
-                route = "perfil"
-            ),
-            NavigationItem(
-                title = "Carrito de compra",
-                selectedIcon = Icons.Filled.ShoppingCart,
-                unselectedIcon = Icons.Outlined.ShoppingCart,
-                route = "cart"
-            ),
-            NavigationItem(
-                title = "Favoritos",
-                selectedIcon = Icons.Filled.Favorite,
-                unselectedIcon = Icons.Outlined.Favorite,
-                route = "favorites"
-            ),
-            NavigationItem(
-                title = "Registro de compra",
-                selectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
-                unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
-                route = "RegistroDeCompra"
-            ),
-            NavigationItem(
-                title = "Vender Producto",
-                selectedIcon = ImageVector.vectorResource(R.drawable.baseline_sell_24),
-                unselectedIcon = ImageVector.vectorResource(R.drawable.outline_sell_24),
-                route = "vender"
-            ),
-            NavigationItem(
-                title = "Cerrar Sesión",
-                selectedIcon = Icons.Outlined.ExitToApp,
-                unselectedIcon = Icons.Outlined.ExitToApp,
-                route = "login"
+        } else {
+            listOf(
+                NavigationItem(
+                    title = "Principal",
+                    selectedIcon = Icons.Filled.Home,
+                    unselectedIcon = Icons.Outlined.Home,
+                    route = "home"
+                ),
+                NavigationItem(
+                    title = "Perfíl",
+                    selectedIcon = Icons.Filled.AccountCircle,
+                    unselectedIcon = Icons.Outlined.AccountCircle,
+                    route = "perfil"
+                ),
+                NavigationItem(
+                    title = "Carrito de compra",
+                    selectedIcon = Icons.Filled.ShoppingCart,
+                    unselectedIcon = Icons.Outlined.ShoppingCart,
+                    route = "cart"
+                ),
+                NavigationItem(
+                    title = "Favoritos",
+                    selectedIcon = Icons.Filled.Favorite,
+                    unselectedIcon = Icons.Outlined.Favorite,
+                    route = "favorites"
+                ),
+                NavigationItem(
+                    title = "Registro de compra",
+                    selectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
+                    unselectedIcon = ImageVector.vectorResource(R.drawable.baseline_list_alt_24),
+                    route = "RegistroDeCompra"
+                ),
+                NavigationItem(
+                    title = "Vender Producto",
+                    selectedIcon = ImageVector.vectorResource(R.drawable.baseline_sell_24),
+                    unselectedIcon = ImageVector.vectorResource(R.drawable.outline_sell_24),
+                    route = "vender"
+                ),
+                NavigationItem(
+                    title = "Cerrar Sesión",
+                    selectedIcon = Icons.Outlined.ExitToApp,
+                    unselectedIcon = Icons.Outlined.ExitToApp,
+                    route = "login"
+                )
             )
-        )
+        }
     }
 }
