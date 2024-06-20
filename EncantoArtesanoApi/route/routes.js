@@ -67,6 +67,20 @@ router.get('/getProduct/:id', async (req, res) =>{
 
 });
 
+// Función para encontrar productos por ID de usuario
+router.get('/getUserProducts/:id', async (req, res) =>{ 
+
+    const{id} = req.params;
+    try {
+        const products = await Model.find({ user: id });
+        res.json(products);
+    } catch (error) {
+        res.status(400).json({"result": error.message})
+        
+    }
+})
+
+
 //Update product
 
 router.patch('/updateProduct/:id', async (req, res) =>{
