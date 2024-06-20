@@ -153,6 +153,23 @@ router.patch("/shopped/:id",
     productController.ShoppedToggleProduct
 );
 
+//Agregar a productos en venta
+router.patch("/onSale/:id",
+    authentication,
+    authorization(ROLES.USER),
+    idInParams,
+    validateFields,
+    productController.onSaleToggleProduct
+);
+
+//Obtener los productos en venta
+   //Obtener los productos comprados por el usuario
+   router.get("/getOnSale",
+    authentication,
+    authorization(ROLES.USER),
+    productController.findOnSale
+    );
+    
 //Guardar datos de pago
 
 

@@ -50,7 +50,6 @@ const userSchema = new Schema({
         ref: "product",
         default: []
     },
-    //Puede que se quite ya que en el modelo de producto ya se tiene el id del usuario que lo publicó
     onSaleProducts:{
         type: [Schema.Types.ObjectId],
         ref: "product",
