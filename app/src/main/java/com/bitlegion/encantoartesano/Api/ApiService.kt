@@ -39,6 +39,7 @@ data class UsernameCheckResponse(val exists: Boolean)
 
 
 data class Product(
+    val _id: String?,
     val nombre: String,
     val descripcion: String,
     val precio: Double,

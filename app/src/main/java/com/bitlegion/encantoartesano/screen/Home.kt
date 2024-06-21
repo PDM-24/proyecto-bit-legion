@@ -1,5 +1,6 @@
 package com.bitlegion.encantoartesano.screen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -73,20 +74,22 @@ fun TiendaUI(viewModel: MainViewModel, navController: NavHostController) {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(productos) { producto ->
-                ProductoCard(producto, navController)
+                ProductoCard(producto, navController, viewModel)
             }
         }
     }
 }
 
 @Composable
-fun ProductoCard(producto: Product, navController: NavHostController) {
+fun ProductoCard(producto: Product, navController: NavHostController, viewModel: MainViewModel) {
     var isFavorite by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { navController.navigate("detail/${producto.nombre}") },
+            .clickable { navController.navigate("detail/${producto.nombre}")
+                viewModel.updateProductId(producto._id)
+            },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         shape = RoundedCornerShape(8.dp)

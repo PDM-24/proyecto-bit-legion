@@ -21,7 +21,14 @@ class MainViewModel : ViewModel() {
     private val _userRole = mutableStateOf<String?>(null)
     val userRole: State<String?> get() = _userRole
 
+    private val _productId = mutableStateOf<String?>(null)
+    val productId: State<String?> get() = _productId
+
     fun updateUserRole(newRole: String?) {
+        _userRole.value = newRole
+    }
+
+    fun updateProductId(newRole: String?) {
         _userRole.value = newRole
     }
     // Utiliza el viewModelScope para corutinas

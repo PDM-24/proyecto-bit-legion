@@ -104,6 +104,7 @@ fun ProductRegistration(navController: NavController, context: Context, userId: 
             onClick = {
                 coroutineScope.launch {
                     val product = Product(
+                        _id = null,
                         nombre = productName,
                         descripcion = description,
                         precio = productPrice.toDoubleOrNull() ?: 0.0,
