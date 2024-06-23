@@ -27,6 +27,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +36,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
+import com.bitlegion.encantoartesano.Api.Product
 import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
 import com.bitlegion.encantoartesano.component.Header
@@ -43,22 +46,10 @@ import com.bitlegion.encantoartesano.ui.theme.MainRed
 import com.bitlegion.encantoartesano.ui.theme.grayWhite
 import kotlinx.coroutines.CoroutineScope
 
-
-data class FavProduct(
-    val nombre: String,
-    val descripcion: String,
-    val precio: String,
-)
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FavUI(viewModel: MainViewModel) {
-    val localScope = rememberCoroutineScope()
-
-    val favProduct = listOf(
-        FavProduct("Nombre", "Descripcion", "Precio"),
-        FavProduct("Nombre", "Descripcion", "Precio"),
-        FavProduct("Nombre", "Descripcion", "Precio"),
-    )
+    val favProducts = viewModel.favProducts
 
     Column(modifier = Modifier
         .background(color = grayWhite)
@@ -76,9 +67,9 @@ fun FavUI(viewModel: MainViewModel) {
         )
         Spacer(modifier = Modifier.height(8.dp))
 
-        FlowRow(){
-            favProduct.forEach {producto ->
-                FavProductCard(producto)
+        FlowRow() {
+            favProducts.forEach { producto ->
+                FavProductCard(producto, viewModel)
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
@@ -86,7 +77,9 @@ fun FavUI(viewModel: MainViewModel) {
 }
 
 @Composable
-fun FavProductCard(producto: FavProduct) {
+fun FavProductCard(producto: Product, viewModel: MainViewModel) {
+    val isFavorite = viewModel.isProductFavorite(producto)
+
     Card(
         modifier = Modifier
             .fillMaxWidth(0.5f)
@@ -107,7 +100,7 @@ fun FavProductCard(producto: FavProduct) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Image(painter = painterResource(id = R.drawable.jarron), contentDescription = "Imagen del producto",
+            Image(painter = rememberAsyncImagePainter(producto.imagenes.firstOrNull()), contentDescription = "Imagen del producto",
                 modifier = Modifier
                     .width(110.dp)
                     .height(110.dp))
@@ -120,14 +113,16 @@ fun FavProductCard(producto: FavProduct) {
                 Text(producto.nombre, style = MaterialTheme.typography.titleSmall.copy(Color.Black), fontWeight = FontWeight.Bold)
                 Text(producto.descripcion, style = MaterialTheme.typography.bodySmall.copy(Color.Black))
                 Row(verticalAlignment = Alignment.CenterVertically){
-                    Text(producto.precio, style = MaterialTheme.typography.bodySmall.copy(Color.Black))
+                    Text("${producto.precio} USD", style = MaterialTheme.typography.bodySmall.copy(Color.Black))
                     Spacer(modifier = Modifier.width(105.dp))
                     IconButton(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            viewModel.toggleProductFavorite(producto)
+                        },
                         modifier = Modifier.size(30.dp),
                         colors = IconButtonDefaults.iconButtonColors(containerColor = Aqua, contentColor = MainRed)
                     ) {
-                        Icon(imageVector = Icons.Filled.Favorite, contentDescription = "Favorite", modifier = Modifier.size(16.dp))
+                        Icon(imageVector = Icons.Filled.Favorite, contentDescription = "Favorite", tint = if (isFavorite) Color.Red else Color.White, modifier = Modifier.size(16.dp))
                     }
                 }
             }

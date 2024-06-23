@@ -23,6 +23,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
+import com.bitlegion.encantoartesano.Api.ApiClient
+import com.bitlegion.encantoartesano.Api.Product
 import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
 import com.bitlegion.encantoartesano.component.Header
@@ -32,14 +35,26 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun ProductDetailScreen(navController: NavHostController, productName: String, viewModel: MainViewModel) {
+fun ProductDetailScreen(navController: NavHostController, productId: String, viewModel: MainViewModel) {
     val scope = rememberCoroutineScope()
+    var product by remember { mutableStateOf<Product?>(null) }
     var isFavorite by remember { mutableStateOf(false) }
-    val images = listOf(R.drawable.jarron, R.drawable.jarron, R.drawable.jarron) // Lista de imágenes
     val pagerState = rememberPagerState()
+
+    LaunchedEffect(Unit) {
+        scope.launch {
+            val response = ApiClient.apiService.getProductById(productId)
+            if (response.isSuccessful) {
+                product = response.body()
+            } else {
+                // Manejar error
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -48,136 +63,138 @@ fun ProductDetailScreen(navController: NavHostController, productName: String, v
     ) {
         Header(viewModel)
 
-        Spacer(modifier = Modifier.height(16.dp))
-        Box(
-            contentAlignment = Alignment.TopEnd,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-        ) {
-            HorizontalPager(
-                count = images.size,
-                state = pagerState,
+        product?.let { prod ->
+            Spacer(modifier = Modifier.height(16.dp))
+            Box(
+                contentAlignment = Alignment.TopEnd,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(8.dp))
-            ) { page ->
-                Image(
-                    painter = painterResource(id = images[page]),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-            IconButton(
-                onClick = { isFavorite = !isFavorite },
-                modifier = Modifier
-                    .size(48.dp)
-                    .padding(8.dp)
-                    .offset(x = (-16).dp)
-                    .background(Aqua, shape = CircleShape)
-                    .clip(CircleShape)
+                    .fillMaxWidth()
+                    .height(200.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "Favorite",
-                    tint = if (isFavorite) Color.Red else Color.White
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(x = (-16).dp)
-        ) {
-            images.forEachIndexed { index, _ ->
-                val color = if (pagerState.currentPage == index) Color.Red else Color.Gray
-                Box(
+                HorizontalPager(
+                    count = prod.imagenes.size,
+                    state = pagerState,
                     modifier = Modifier
-                        .size(8.dp)
-                        .background(color, CircleShape)
-                        .padding(4.dp)
-                )
-                if (index < images.size - 1) {
-                    Spacer(modifier = Modifier.width(8.dp))
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(8.dp))
+                ) { page ->
+                    Image(
+                        painter = rememberAsyncImagePainter(prod.imagenes[page]),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+                IconButton(
+                    onClick = { isFavorite = !isFavorite },
+                    modifier = Modifier
+                        .size(48.dp)
+                        .padding(8.dp)
+                        .offset(x = (-16).dp)
+                        .background(Aqua, shape = CircleShape)
+                        .clip(CircleShape)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "Favorite",
+                        tint = if (isFavorite) Color.Red else Color.White
+                    )
                 }
             }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Color(0xFF008080), shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                .padding(16.dp)
-        ) {
-            Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = productName,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        modifier = Modifier.weight(1f)
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(x = (-16).dp)
+            ) {
+                prod.imagenes.forEachIndexed { index, _ ->
+                    val color = if (pagerState.currentPage == index) Color.Red else Color.Gray
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .background(color, CircleShape)
+                            .padding(4.dp)
                     )
-                    Text(
-                        text = "★★★★☆",
-                        fontSize = 32.sp,
-                        color = Color.Black,
-                    )
+                    if (index < prod.imagenes.size - 1) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Descripción del Producto",
-                    fontSize = 16.sp,
-                    color = Color.White
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+            }
+            Spacer(modifier = Modifier.height(16.dp))
 
-                Spacer(modifier = Modifier.height(175.dp))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "$25",
-                        fontSize = 50.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                    Column(
-                        horizontalAlignment = Alignment.End
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = Color(0xFF008080), shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                    .padding(16.dp)
+            ) {
+                Column {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Nombre del vendedor",
-                            fontSize = 18.sp,
+                            text = prod.nombre,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
                             color = Color.White,
-                            modifier = Modifier.clickable {
-                                navController.navigate("seller_profile")
-                            }
+                            modifier = Modifier.weight(1f)
                         )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Button(
-                            onClick = { /* TODO: Handle add to cart */ },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0XFFE19390)),
-                            shape = RoundedCornerShape(8.dp),
-                            modifier = Modifier
-                                .height(70.dp)
-                                .width(250.dp)
-                                .clip(RoundedCornerShape(8.dp))
+                        Text(
+                            text = "★★★★☆",
+                            fontSize = 32.sp,
+                            color = Color.Black,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = prod.descripcion,
+                        fontSize = 16.sp,
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Spacer(modifier = Modifier.height(175.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "${prod.precio} USD",
+                            fontSize = 50.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                        Column(
+                            horizontalAlignment = Alignment.End
                         ) {
                             Text(
-                                text = "Agregar al Carrito",
-                                fontSize = 20.sp,
-                                color = Color.Black
+                                text = "Nombre del vendedor",
+                                fontSize = 18.sp,
+                                color = Color.White,
+                                modifier = Modifier.clickable {
+                                    navController.navigate("seller_profile")
+                                }
                             )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Button(
+                                onClick = { /* TODO: Handle add to cart */ },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(0XFFE19390)),
+                                shape = RoundedCornerShape(8.dp),
+                                modifier = Modifier
+                                    .height(70.dp)
+                                    .width(250.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                            ) {
+                                Text(
+                                    text = "Agregar al Carrito",
+                                    fontSize = 20.sp,
+                                    color = Color.Black
+                                )
+                            }
                         }
                     }
                 }
@@ -185,6 +202,7 @@ fun ProductDetailScreen(navController: NavHostController, productName: String, v
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

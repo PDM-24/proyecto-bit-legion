@@ -40,6 +40,18 @@ interface ApiService {
 
     @POST("post/postPayment")
     suspend fun savePayment(@Body payData: PayData): Response<Void>
+
+    @GET("post/getProduct/{id}")
+    suspend fun getProductById(@Path("id") _id: String): Response<Product>
+
+    @PATCH("post/like/{id}")
+    suspend fun likeProduct(@Path("id") id: String): Response<User>
+
+    @PATCH("post/unlike/{id}")
+    suspend fun unlikeProduct(@Path("id") id: String): Response<User>
+
+    @GET("post/getLikes")
+    suspend fun getLikedProducts(): Response<List<Product>>
 }
 
 data class UsernameCheckResponse(val exists: Boolean)

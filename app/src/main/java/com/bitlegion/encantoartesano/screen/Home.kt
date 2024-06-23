@@ -82,14 +82,12 @@ fun TiendaUI(viewModel: MainViewModel, navController: NavHostController) {
 
 @Composable
 fun ProductoCard(producto: Product, navController: NavHostController, viewModel: MainViewModel) {
-    var isFavorite by remember { mutableStateOf(false) }
+    val isFavorite = viewModel.isProductFavorite(producto)
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { navController.navigate("detail/${producto.nombre}")
-                viewModel.updateProductId(producto._id)
-            },
+            .clickable { navController.navigate("detail/${producto._id}") },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         shape = RoundedCornerShape(8.dp)
@@ -133,7 +131,9 @@ fun ProductoCard(producto: Product, navController: NavHostController, viewModel:
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(
-                        onClick = { isFavorite = !isFavorite },
+                        onClick = {
+                            viewModel.toggleProductFavorite(producto)
+                        },
                         modifier = Modifier.size(30.dp),
                         colors = IconButtonDefaults.iconButtonColors(containerColor = Color(0xFF2B7A78), contentColor = Color.White)
                     ) {

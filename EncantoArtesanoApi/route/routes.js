@@ -8,13 +8,13 @@ const ROLES = require("../data/roles.constants.json");
 const productController = require('../controllers/product.controller')
 const { authentication, authorization } = require("../middlewares/auth.middleware");
 
-const { idInParams, idenInParams,  } = require("../validators/product.validator");
+const { idInParams, idenInParams, } = require("../validators/product.validator");
 const validateFields = require("../validators/index.validator");
 
 
 
 //Insert Product: POST
-router.post('/postProduct', async (req, res) =>{
+router.post('/postProduct', async (req, res) => {
     console.log('Received POST request at /postProduct');
     console.log('Request body:', req.body);
 
@@ -29,13 +29,13 @@ router.post('/postProduct', async (req, res) =>{
         user: req.body.user
     })
 
-    try{
+    try {
         const dataToSave = await data.save()
-        res.status(200).json({"result": "ok"})
+        res.status(200).json({ "result": "ok" })
     }
-    catch(error){
+    catch (error) {
         console.error('Error saving product:', error.message);
-        res.status(400).json({"result": error.message})
+        res.status(400).json({ "result": error.message })
     }
 
 });
@@ -64,43 +64,43 @@ router.post('/postPayment', async (req, res) =>{
 
 //Get all products
 
-router.get('/getAllProducts', async (req, res) =>{
+router.get('/getAllProducts', async (req, res) => {
 
-    try{
+    try {
         const data = await Model.find()
         res.status(200).json(data)
     }
-    catch(error){
-        res.status(400).json({"result": error.message})
+    catch (error) {
+        res.status(400).json({ "result": error.message })
     }
 
 });
 
 //Get one product
-router.get('/getProduct/:id', async (req, res) =>{
+router.get('/getProduct/:id', async (req, res) => {
 
-    const{id}=req.params; 
+    const { id } = req.params;
 
-    try{
-        const data = await Model.findOne({_id: id})
+    try {
+        const data = await Model.findOne({ _id: id })
         res.json(data)
     }
-    catch(error){
-        res.status(400).json({"result": error.message})
+    catch (error) {
+        res.status(400).json({ "result": error.message })
     }
 
 });
 
 // Función para encontrar productos por ID de usuario
-router.get('/getUserProducts/:id', async (req, res) =>{ 
+router.get('/getUserProducts/:id', async (req, res) => {
 
-    const{id} = req.params;
+    const { id } = req.params;
     try {
         const products = await Model.find({ user: id });
         res.json(products);
     } catch (error) {
-        res.status(400).json({"result": error.message})
-        
+        res.status(400).json({ "result": error.message })
+
     }
 })
 
@@ -122,37 +122,37 @@ router.get('/getPayment/:id', async (req, res) =>{
 
 //Update product
 
-router.patch('/updateProduct/:id', async (req, res) =>{
+router.patch('/updateProduct/:id', async (req, res) => {
 
-    try{
+    try {
         const id = req.query.id;
         const updatedData = req.body;
-        const options = {new: true};
+        const options = { new: true };
 
 
         const result = await Model.findByIdAndUpdate(
             id, updatedData, options
         );
-        res.status(200).json({"result": "ok"})
+        res.status(200).json({ "result": "ok" })
     }
-    catch(error){
-        res.status(400).json({"result": error.message})
+    catch (error) {
+        res.status(400).json({ "result": error.message })
     }
 
 });
 
 //Delete Product
-router.delete('/deleteProduct/:id', async (req, res) =>{
+router.delete('/deleteProduct/:id', async (req, res) => {
 
-    try{
-        const{id}=req.params; 
+    try {
+        const { id } = req.params;
 
 
-        const result = await Model.findOneAndDelete({_id: id})
-        res.status(200).json({"result": "ok"})
+        const result = await Model.findOneAndDelete({ _id: id })
+        res.status(200).json({ "result": "ok" })
     }
-    catch(error){
-        res.status(400).json({"result": error.message})
+    catch (error) {
+        res.status(400).json({ "result": error.message })
     }
 
 });
@@ -171,37 +171,53 @@ router.get("/getOnCart",
     authentication,
     authorization(ROLES.USER),
     productController.findOnCartProducts
-    );
+);
 
-    //Obtener los productos que tiene likes del usuario
+//Obtener los productos que tiene likes del usuario
 router.get("/getLikes",
     authentication,
     authorization(ROLES.USER),
     productController.findLikes
-    );
+);
 
-    //Obtener los productos comprados por el usuario
+//Obtener los productos comprados por el usuario
 router.get("/getShopped",
     authentication,
     authorization(ROLES.USER),
     productController.findShopped
-    );
+);
 
-   /*   //Obtener los metodos de pago guardados por el usuario
-router.get("/getPayment",
+// Endpoint para agregar/quitar producto de favoritos
+router.patch('/like/:id', async (req, res) => {
+    const userId = req.params._id;
+    const { id: productId } = req.params;
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const index = user.favorites.indexOf(productId);
+        if (index > -1) {
+            user.favorites.splice(index, 1); // Quitar de favoritos
+        } else {
+            user.favorites.push(productId); // Agregar a favoritos
+        }
+
+        await user.save();
+        res.status(200).json({ message: 'Favorites updated', favorites: user.favorites });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
+//Conseguir los productos likeados
+router.get("/getLikes",
     authentication,
     authorization(ROLES.USER),
-    productController.getPaymentMethods
-    );*/
-    
-
-//Like/Dislike a productos
-router.patch("/like/:id",
-    authentication,
-    authorization(ROLES.USER),
-    idInParams,
-    validateFields,
-    productController.likeAProduct
+    productController.findLikes
 );
 
 //Finalizar compra y agregar producto a ShoppedProducts
@@ -223,13 +239,13 @@ router.patch("/onSale/:id",
 );
 
 //Obtener los productos en venta
-   //Obtener los productos comprados por el usuario
-   router.get("/getOnSale",
+//Obtener los productos comprados por el usuario
+router.get("/getOnSale",
     authentication,
     authorization(ROLES.USER),
     productController.findOnSale
-    );
-    
+);
+
 //Guardar datos de pago
 
 // Obtener productos por usuario
@@ -261,6 +277,7 @@ router.patch('/updateProfilePicture/:id', async (req, res) => {
         return res.status(400).json({ result: error.message });
     }
 });
+
 
 
 
