@@ -1,6 +1,8 @@
 const express = require('express');
 
 const Model = require('../model/product.model')
+const Payment = require('../model/tarjetas.model')
+
 const router = express.Router()
 const ROLES = require("../data/roles.constants.json");
 const productController = require('../controllers/product.controller')
@@ -25,6 +27,28 @@ router.post('/postProduct', async (req, res) =>{
         imagenes: req.body.imagenes || [], // Valor por defecto
         fecha: req.body.fecha || new Date(), // Valor por defecto
         user: req.body.user
+    })
+
+    try{
+        const dataToSave = await data.save()
+        res.status(200).json({"result": "ok"})
+    }
+    catch(error){
+        console.error('Error saving product:', error.message);
+        res.status(400).json({"result": error.message})
+    }
+
+});
+
+//Insertar tarjeta: POST
+router.post('/postPayment', async (req, res) =>{
+
+    const data = new Payment({
+        titular: req.body.titular,
+        number: req.body.number,
+        cvv: req.body.cvv,
+        fechaVencimiento: req.body.fechaVencimiento,
+        user: req.body.user 
     })
 
     try{
@@ -74,6 +98,21 @@ router.get('/getUserProducts/:id', async (req, res) =>{
     try {
         const products = await Model.find({ user: id });
         res.json(products);
+    } catch (error) {
+        res.status(400).json({"result": error.message})
+        
+    }
+})
+
+
+
+// Función para encontrar tarjetas por ID de usuario
+router.get('/getPayment/:id', async (req, res) =>{ 
+
+    const{id} = req.params;
+    try {
+        const methods = await Payment.find({ user: id });
+        res.json(methods);
     } catch (error) {
         res.status(400).json({"result": error.message})
         
@@ -147,6 +186,13 @@ router.get("/getShopped",
     authorization(ROLES.USER),
     productController.findShopped
     );
+
+   /*   //Obtener los metodos de pago guardados por el usuario
+router.get("/getPayment",
+    authentication,
+    authorization(ROLES.USER),
+    productController.getPaymentMethods
+    );*/
     
 
 //Like/Dislike a productos

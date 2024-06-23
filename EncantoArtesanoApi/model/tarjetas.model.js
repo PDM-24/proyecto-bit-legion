@@ -9,7 +9,7 @@ const dataSchema = new Mongoose.Schema(
             require: true,
             trim: true
         },
-        numeroTarjeta:{
+        number:{
             type: String,
             require: true,
             trim: true
@@ -24,7 +24,11 @@ const dataSchema = new Mongoose.Schema(
             require: true,
             trim: true
         }, 
-
+        user: {
+            type: Mongoose.Schema.Types.ObjectId,
+            ref: "user",
+            required: true
+        }
     }
 );
 

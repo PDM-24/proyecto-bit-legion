@@ -170,7 +170,7 @@ controller.findOnCartProducts = async (req, res, next) => {
             ]
         });
     
-        return res.status(200).json({posts: user["onCartProducts"]});
+        return res.status(200).json({result: user["onCartProducts"]});
 
     }
     catch(error){
@@ -193,7 +193,7 @@ controller.findLikes = async (req, res, next) => {
             ]
         });
     
-        return res.status(200).json({posts: user["likedProducts"]});
+        return res.status(200).json({result: user["likedProducts"]});
 
     }
     catch(error){
@@ -216,7 +216,24 @@ controller.findShopped = async (req, res, next) => {
             ]
         });
     
-        return res.status(200).json({posts: user["shoppedProducts"]});
+        return res.status(200).json({result: user["shoppedProducts"]});
+
+    }
+    catch(error){
+        next(error);
+    }
+}
+
+controller.getPaymentMethods = async (req, res, next) => {
+    try{
+        const user =
+        await (req.user)
+        .populate({
+            path: "tarjetas"
+           
+        });
+    
+        return res.status(200).json({result: user["tarjetas"]});
 
     }
     catch(error){
@@ -239,7 +256,7 @@ controller.findOnSale = async (req, res, next) => {
             ]
         });
     
-        return res.status(200).json({posts: user["onSaleProducts"]});
+        return res.status(200).json({result: user["onSaleProducts"]});
 
     }
     catch(error){

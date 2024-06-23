@@ -55,11 +55,11 @@ const userSchema = new Schema({
         ref: "product",
         default: []
     },
-    tarjetas: {
+   /*tarjetas: {
         type: [Schema.Types.ObjectId],
         ref: "tarjetas",
         default: []
-    }
+    }*/
     
 }, { timestamps: true})
 

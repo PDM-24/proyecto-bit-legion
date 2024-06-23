@@ -1,32 +1,40 @@
 package com.bitlegion.encantoartesano.screen
 
-import androidx.compose.foundation.Image
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.bitlegion.encantoartesano.R
 // Pay.kt
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.bitlegion.encantoartesano.Api.ApiClient
+import com.bitlegion.encantoartesano.Api.PayData
+import kotlinx.coroutines.launch
+
 @Composable
 fun PaymentScreen(navController: NavController) {
     var showDialog by remember { mutableStateOf(false) }
+    var selectedPaymentMethod by remember { mutableStateOf<PayData?>(null) }
 
     Scaffold(
         topBar = {
@@ -48,21 +56,54 @@ fun PaymentScreen(navController: NavController) {
                     .padding(padding)
                     .background(Color.White)
             ) {
-                PaymentMethodsSection()
+                PaymentMethodsSection(onPaymentMethodSelected = {
+                    selectedPaymentMethod = it
+                })
                 PaymentDetailsSection(
+                    selectedPaymentMethod = selectedPaymentMethod,
                     onPayNowClick = { showDialog = true }
                 )
             }
 
             if (showDialog) {
-                PaymentSuccessDialog(onDismiss = { showDialog = false })
+                PaymentSuccessDialog(onDismiss = {
+                    showDialog = false
+                    navController.navigate("home")
+                })
             }
         }
     )
 }
 
 @Composable
-fun PaymentMethodsSection() {
+fun PaymentMethodsSection(onPaymentMethodSelected: (PayData) -> Unit) {
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences("encanto_artesano_prefs", Context.MODE_PRIVATE)
+    val userId = sharedPreferences.getString("user_id", null)
+    var paymentMethods by remember { mutableStateOf<List<PayData>>(emptyList()) }
+
+    fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
+    LaunchedEffect(userId) {
+        userId?.let {
+            coroutineScope.launch {
+                try {
+                    val response = ApiClient.apiService.getPaymentMethods(it)
+                    if (response.isSuccessful) {
+                        paymentMethods = response.body() ?: emptyList()
+                    } else {
+                        showToast("Error al obtener métodos de pago")
+                    }
+                } catch (e: Exception) {
+                    showToast("Error de red al obtener métodos de pago")
+                }
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -81,21 +122,18 @@ fun PaymentMethodsSection() {
             }
         }
 
-        Row(
+        LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            listOf(
-                R.drawable.visa,
-                R.drawable.mastercard,
-                R.drawable.american_express
-            ).forEach { paymentMethod ->
+            items(paymentMethods) { paymentMethod ->
                 Card(
                     modifier = Modifier
                         .size(100.dp)
-                        .padding(4.dp),
+                        .padding(4.dp)
+                        .clickable { onPaymentMethodSelected(paymentMethod) },
                     shape = RoundedCornerShape(8.dp),
                     elevation = 4.dp
                 ) {
@@ -103,10 +141,10 @@ fun PaymentMethodsSection() {
                         contentAlignment = Alignment.Center,
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        Image(
-                            painter = painterResource(id = paymentMethod),
-                            contentDescription = "Payment Method",
-                            modifier = Modifier.size(90.dp)
+                        Text(
+                            text = "**** ${paymentMethod.number.takeLast(4)}",
+                            style = MaterialTheme.typography.body1,
+                            color = Color.Black
                         )
                     }
                 }
@@ -115,14 +153,51 @@ fun PaymentMethodsSection() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PaymentDetailsSection(onPayNowClick: () -> Unit) {
+fun PaymentDetailsSection(
+    selectedPaymentMethod: PayData?,
+    onPayNowClick: () -> Unit
+) {
     var cardHolder by remember { mutableStateOf("") }
     var cardNumber by remember { mutableStateOf("") }
     var expiryDate by remember { mutableStateOf("") }
     var cvv by remember { mutableStateOf("") }
     var saveCardDetails by remember { mutableStateOf(true) }
+    val sharedPreferences = LocalContext.current.getSharedPreferences("encanto_artesano_prefs", Context.MODE_PRIVATE)
+    val userId = sharedPreferences.getString("user_id", null)
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    // Update fields with selected payment method
+    LaunchedEffect(selectedPaymentMethod) {
+        selectedPaymentMethod?.let {
+            cardHolder = it.titular ?: ""
+            cardNumber = it.number ?: ""
+            expiryDate = it.fechaVencimiento ?: ""
+            cvv = it.cvv ?: ""
+        }
+    }
+
+    // Validation functions
+    fun isCardHolderValid(cardHolder: String): Boolean {
+        return cardHolder.isNotEmpty() && cardHolder.matches(Regex("^[a-zA-Z\\s]+$"))
+    }
+
+    fun isCardNumberValid(cardNumber: String): Boolean {
+        return cardNumber.length == 16 && cardNumber.all { it.isDigit() }
+    }
+
+    fun isExpiryDateValid(expiryDate: String): Boolean {
+        return expiryDate.isNotEmpty() && expiryDate.matches(Regex("(0[1-9]|1[0-2])/\\d{4}"))
+    }
+
+    fun isCvvValid(cvv: String): Boolean {
+        return cvv.isNotEmpty() && cvv.length in 3..4 && cvv.all { it.isDigit() }
+    }
+
+    fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
 
     Column(
         modifier = Modifier
@@ -137,7 +212,8 @@ fun PaymentDetailsSection(onPayNowClick: () -> Unit) {
             onValueChange = { cardHolder = it },
             label = { Text("Titular de la tarjeta") },
             placeholder = { Text("Ej. Juan Roberto") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            isError = !isCardHolderValid(cardHolder)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -148,7 +224,9 @@ fun PaymentDetailsSection(onPayNowClick: () -> Unit) {
             label = { Text("Número de la tarjeta") },
             placeholder = { Text("XXXX XXXX XXXX XXXX") },
             modifier = Modifier.fillMaxWidth(),
-            visualTransformation = VisualTransformation.None
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            visualTransformation = VisualTransformation.None,
+            isError = !isCardNumberValid(cardNumber)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -162,7 +240,10 @@ fun PaymentDetailsSection(onPayNowClick: () -> Unit) {
                 onValueChange = { expiryDate = it },
                 label = { Text("Fecha de vencimiento") },
                 placeholder = { Text("MM/YYYY") },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Ascii),
+                visualTransformation = VisualTransformation.None,
+                isError = !isExpiryDateValid(expiryDate)
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -173,7 +254,9 @@ fun PaymentDetailsSection(onPayNowClick: () -> Unit) {
                 label = { Text("CVV") },
                 placeholder = { Text("Ej. 123") },
                 modifier = Modifier.weight(1f),
-                visualTransformation = VisualTransformation.None
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                visualTransformation = VisualTransformation.None,
+                isError = !isCvvValid(cvv)
             )
         }
 
@@ -203,7 +286,37 @@ fun PaymentDetailsSection(onPayNowClick: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        PaymentButton(onClick = onPayNowClick)
+        PaymentButton(onClick = {
+            // Validation checks
+            when {
+                !isCardHolderValid(cardHolder) -> showToast("El titular de la tarjeta no es válido")
+                !isCardNumberValid(cardNumber) -> showToast("El número de la tarjeta no es válido")
+                !isExpiryDateValid(expiryDate) -> showToast("La fecha de vencimiento no es válida")
+                !isCvvValid(cvv) -> showToast("El CVV no es válido")
+                else -> {
+                    if (saveCardDetails) {
+                        coroutineScope.launch {
+                            val pay = PayData(
+                                _id = null,
+                                titular = cardHolder,
+                                number = cardNumber,
+                                fechaVencimiento = expiryDate,
+                                cvv = cvv,
+                                user = userId
+                            )
+                            val response = ApiClient.apiService.savePayment(pay)
+                            if (response.isSuccessful) {
+                                onPayNowClick.invoke()
+                            } else {
+                                showToast("Error al guardar metodo de pago")
+                            }
+                        }
+                    } else {
+                        onPayNowClick.invoke()
+                    }
+                }
+            }
+        })
     }
 }
 
@@ -258,5 +371,5 @@ fun PaymentSuccessDialog(onDismiss: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-        PaymentScreen(navController = rememberNavController())
+    PaymentScreen(navController = rememberNavController())
 }

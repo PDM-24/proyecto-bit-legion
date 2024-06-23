@@ -33,6 +33,13 @@ interface ApiService {
 
     @GET("post/getUserProducts/{userId}")
     suspend fun getUserProducts(@Path("userId") userId: String): Response<List<Product>>
+
+    @GET("post/getPayment/{userId}")
+    suspend fun getPaymentMethods(@Path("userId") userId: String): Response<List<PayData>>
+
+
+    @POST("post/postPayment")
+    suspend fun savePayment(@Body payData: PayData): Response<Void>
 }
 
 data class UsernameCheckResponse(val exists: Boolean)
@@ -48,6 +55,15 @@ data class Product(
     val calificacion: Int = 0,
     val fecha:Date,
     val user: String
+)
+
+data class PayData(
+    val _id: String?,
+    val number: String,
+    val titular: String,
+    val fechaVencimiento: String,
+    val cvv: String,
+    val user: String?
 )
 
 
