@@ -164,7 +164,7 @@ fun ProductDetailScreen(navController: NavHostController, productId: String, vie
                     ) {
                         Text(
                             text = "${prod.precio} USD",
-                            fontSize = 50.sp,
+                            fontSize = 35.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
