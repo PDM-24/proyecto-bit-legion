@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 
 @Composable
-fun ActiveUsers(modifier: Modifier = Modifier) {
+fun BlockedUsers(modifier: Modifier = Modifier) {
     var users by remember { mutableStateOf(emptyList<UserWithState>()) }
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -37,7 +37,7 @@ fun ActiveUsers(modifier: Modifier = Modifier) {
     LaunchedEffect(Unit) {
         coroutineScope.launch {
             try {
-                val response: Response<List<UserWithState>> = ApiClient.apiService.getActiveUsers()
+                val response: Response<List<UserWithState>> = ApiClient.apiService.getBlockedUsers()
                 if (response.isSuccessful) {
                     users = response.body() ?: emptyList()
                 } else {
@@ -56,10 +56,10 @@ fun ActiveUsers(modifier: Modifier = Modifier) {
             .fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Usuarios Activos", fontWeight = FontWeight.Bold, fontSize = 18.sp, modifier = Modifier.padding(30.dp))
+        Text(text = "Usuarios bloqueados", fontWeight = FontWeight.Bold, fontSize = 18.sp, modifier = Modifier.padding(30.dp))
         LazyColumn(modifier = Modifier) {
             items(users) { user ->
-                MyCardUser2(
+                BlockedCardUser(
                     user = user,
                     onToggleUserState = { userId ->
                         coroutineScope.launch {
@@ -83,11 +83,11 @@ fun ActiveUsers(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun MyCardUser2(user: UserWithState, onToggleUserState: (String) -> Unit) {
+fun BlockedCardUser(user: UserWithState, onToggleUserState: (String) -> Unit) {
     var showDialog by remember { mutableStateOf(false) }
 
     if (showDialog) {
-        onToggleStateDialog(
+        onToggleStateDialog2(
             onConfirm = {
                 onToggleUserState(user.username)
                 showDialog = false
@@ -123,7 +123,7 @@ fun MyCardUser2(user: UserWithState, onToggleUserState: (String) -> Unit) {
 }
 
 @Composable
-fun onToggleStateDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+fun onToggleStateDialog2(onConfirm: () -> Unit, onDismiss: () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
         Box(
             modifier = Modifier
@@ -160,6 +160,6 @@ fun onToggleStateDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-fun ActiveUsersPreview(modifier: Modifier = Modifier) {
+fun BlockedUsersPreview(modifier: Modifier = Modifier) {
     ActiveUsers()
 }

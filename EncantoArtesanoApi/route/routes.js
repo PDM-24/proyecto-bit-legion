@@ -1,6 +1,7 @@
 const express = require('express');
 
 const Model = require('../model/product.model')
+
 const Payment = require('../model/tarjetas.model')
 const User = require('../model/user.model')
 const router = express.Router()
@@ -75,6 +76,38 @@ router.get('/getAllProducts', async (req, res) => {
     }
 
 });
+// Get all Blocked products
+router.get('/getAllActiveProducts', async (req, res) => {
+    try {
+        // Encuentra todos los usuarios cuyo estado es inactivo
+        const inactiveUsers = await User.find({ userState: true }, '_id');
+        const inactiveUserIds = inactiveUsers.map(user => user._id);
+
+        // Encuentra todos los productos cuyo user está en la lista de usuarios inactivos
+        const blockedProducts = await Model.find({ user: { $in: inactiveUserIds } });
+
+        res.status(200).json(blockedProducts);
+    } catch (error) {
+        res.status(400).json({ "result": error.message });
+    }
+});
+
+// Get all Blocked products
+router.get('/getAllBlockedProducts', async (req, res) => {
+    try {
+        // Encuentra todos los usuarios cuyo estado es inactivo
+        const inactiveUsers = await User.find({ userState: false }, '_id');
+        const inactiveUserIds = inactiveUsers.map(user => user._id);
+
+        // Encuentra todos los productos cuyo user está en la lista de usuarios inactivos
+        const blockedProducts = await Model.find({ user: { $in: inactiveUserIds } });
+
+        res.status(200).json(blockedProducts);
+    } catch (error) {
+        res.status(400).json({ "result": error.message });
+    }
+});
+
 
 //Get one product
 router.get('/getProduct/:id', async (req, res) => {
@@ -140,6 +173,8 @@ router.patch('/updateProduct/:id', async (req, res) => {
     }
 
 });
+
+
 
 //Delete Product
 router.delete('/deleteProduct/:id', async (req, res) => {

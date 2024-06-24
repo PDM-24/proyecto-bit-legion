@@ -25,12 +25,59 @@ router.post('/createUser', async (req, res) =>{
 
 });
 
+// Cambiar el estado de un usuario: PATCH
+router.patch('/updateUserState/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ result: 'User not found' });
+        }
+
+        user.userState = !user.userState;
+        await user.save();
+        res.status(200).json({ result: `User state updated to ${user.userState}` });
+    } catch (error) {
+        res.status(400).json({ result: error.message });
+    }
+});
+
 //Obtener todos los usuarios
 
 router.get('/getAllUsers', async (req, res) =>{
 
     try{
         const data = await User.find()
+        res.status(200).json(data)
+    }
+    catch(error){
+        res.status(400).json({"result": error.message})
+    }
+
+});
+
+//Obtener los usuarios activos
+
+router.get('/getActiveUsers', async (req, res) =>{
+
+    try{
+        const data = await User.find({userState: true, rol: ROLES.USER})
+        res.status(200).json(data)
+    }
+    catch(error){
+        res.status(400).json({"result": error.message})
+    }
+
+});
+
+
+//Obtener los usuarios bloqueados
+
+router.get('/getBlockedUsers', async (req, res) =>{
+
+    try{
+        const data = await User.find({userState: false, rol: ROLES.USER})
         res.status(200).json(data)
     }
     catch(error){

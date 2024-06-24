@@ -37,7 +37,7 @@ fun TiendaUI(viewModel: MainViewModel, navController: NavHostController) {
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
-            val response = ApiClient.apiService.getAllProducts()
+            val response = ApiClient.apiService.getAllActiveProducts()
             if (response.isSuccessful) {
                 productos = response.body() ?: emptyList()
             } else {

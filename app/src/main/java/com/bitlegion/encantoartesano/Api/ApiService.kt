@@ -2,6 +2,7 @@ package com.bitlegion.encantoartesano.Api
 
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
@@ -26,6 +27,9 @@ interface ApiService {
     @GET("post/getAllProducts")
     suspend fun getAllProducts(): Response<List<Product>>
 
+    @GET("post/getAllActiveProducts")
+    suspend fun getAllActiveProducts(): Response<List<Product>>
+
     @GET("auth/getUser/{id}")
     suspend fun getUserById(@Path("id") userId: String): Response<User>
 
@@ -42,6 +46,9 @@ interface ApiService {
     @POST("post/postPayment")
     suspend fun savePayment(@Body payData: PayData): Response<Void>
 
+    @DELETE("post/deleteProduct/{productId}")
+    suspend fun deleteProduct(@Path("productId") productId: String): Response<Void>
+
     @GET("post/getProduct/{id}")
     suspend fun getProductById(@Path("id") _id: String): Response<Product>
 
@@ -50,6 +57,20 @@ interface ApiService {
 
     @GET("post/getLikes")
     suspend fun getLikedProducts(@Header("Authorization") token: String): Response<List<Product>>
+
+    @GET("auth/getAllUsers")
+    suspend fun getAllUsers(): Response<List<UserWithState>>
+
+    @GET("auth/getActiveUsers")
+    suspend fun getActiveUsers(): Response<List<UserWithState>>
+
+
+    @GET("auth/getBlockedUsers")
+    suspend fun getBlockedUsers(): Response<List<UserWithState>>
+
+
+    @PATCH("auth/updateUserState/{userId}")
+    suspend fun updateState(@Path("userId") userId: String): Response<Void>
 }
 
 data class UsernameCheckResponse(val exists: Boolean)
@@ -66,6 +87,24 @@ data class Product(
     val fecha:Date,
     val user: String
 )
+
+data class ProductHome(
+    val _id: String?,
+    val nombre: String,
+    val descripcion: String,
+    val precio: Double,
+    val ubicacion: String,
+    val imagenes: List<String>,
+    val calificacion: Int = 0,
+    val fecha:Date,
+    val user: UserProduct
+)
+
+data class UserProduct(
+    val _id: String,
+    val state: Boolean
+)
+
 
 data class PayData(
     val _id: String?,

@@ -18,5 +18,14 @@ data class LoginResponse(
     val userRol: String
 )
 
+data class UserWithState(
+    val _id: String?,
+    val username: String,
+    val password: String?,
+    val edad: Int,
+    val profilePicture: String = "",
+    var userState: Boolean
+)
+
 
 

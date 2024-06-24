@@ -3,7 +3,6 @@ package com.bitlegion.encantoartesano
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.compose.BackHandler
@@ -32,20 +31,17 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.bitlegion.encantoartesano.screen.*
 import com.bitlegion.encantoartesano.screen.admin.TiendaUIAdmin
 import com.bitlegion.encantoartesano.ui.theme.EncantoArtesanoTheme
 import com.bitlegion.encantoartesano.ui.theme.LightPink
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
-import kotlin.math.log
+
 
 data class NavigationItem(
     val title: String,
@@ -54,7 +50,6 @@ data class NavigationItem(
     val badgeCount: Int? = null,
     val route: String
 )
-
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -184,6 +179,7 @@ class MainActivity : ComponentActivity() {
                 composable("adminHome") { TiendaUIAdmin(viewModel = viewModel, navController = navController) }
                 composable("RegistroDeCompra") { BoughtItems(navController, viewModel) }
                 composable("active_users") { ActiveUsers() }
+                composable("block_users") { BlockedUsers() }
                 composable("account_deletion") { AccountDeletion(navController) }
             }
             // Handle back press
@@ -261,7 +257,7 @@ class MainActivity : ComponentActivity() {
                     title = "Cuentas bloqueadas",
                     selectedIcon = Icons.Filled.Person,
                     unselectedIcon = Icons.Outlined.Person,
-                    route = "account_deletion"
+                    route = "block_users"
                 ),
                 NavigationItem(
                     title = "Administrar cuentas",

@@ -55,12 +55,11 @@ const userSchema = new Schema({
         ref: "product",
         default: []
     },
-   /*tarjetas: {
-        type: [Schema.Types.ObjectId],
-        ref: "tarjetas",
-        default: []
-    }*/
-    
+    userState:{
+        type: Boolean,
+        default: true
+    }
+  
 }, { timestamps: true})
 
 
