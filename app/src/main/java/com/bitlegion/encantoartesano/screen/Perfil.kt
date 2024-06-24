@@ -38,6 +38,7 @@ fun PerfilScreen(navController: NavHostController, viewModel: MainViewModel) {
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences("encanto_artesano_prefs", Context.MODE_PRIVATE)
     val userId = sharedPreferences.getString("user_id", "") ?: ""
+    val userRol = sharedPreferences.getString("user_rol", null)
 
     var user by remember { mutableStateOf(User("", "", 0, "")) }
     var products by remember { mutableStateOf(listOf<Product>()) }
@@ -60,7 +61,21 @@ fun PerfilScreen(navController: NavHostController, viewModel: MainViewModel) {
             .padding(16.dp)
     ) {
         item {
-            IconButton(onClick = { navController.popBackStack() }) {
+            IconButton(onClick = {
+                if (userRol == "admin") {
+                navController.navigate("adminHome") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
+            } else {
+                navController.navigate("home") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
+            }
+            }) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_chevron_left_24),
                     contentDescription = null,

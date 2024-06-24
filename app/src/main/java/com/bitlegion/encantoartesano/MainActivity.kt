@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
@@ -43,6 +44,7 @@ import com.bitlegion.encantoartesano.ui.theme.LightPink
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.ActivityCompat
 import kotlin.math.log
 
 data class NavigationItem(
@@ -52,9 +54,6 @@ data class NavigationItem(
     val badgeCount: Int? = null,
     val route: String
 )
-
-
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
@@ -68,9 +67,9 @@ class MainActivity : ComponentActivity() {
             val context = LocalContext.current
             val sharedPreferences = context.getSharedPreferences("encanto_artesano_prefs", Context.MODE_PRIVATE)
             val userRol = sharedPreferences.getString("user_rol", null)
-
+            val navController = rememberNavController()
             EncantoArtesanoTheme {
-                val navController = rememberNavController()
+
 
                 LaunchedEffect(navController) {
                     navController.addOnDestinationChangedListener { _, destination, _ ->
@@ -105,8 +104,27 @@ class MainActivity : ComponentActivity() {
                                                 selectedItemIndex = index
                                                 localScope.launch {
                                                     viewModel.drawerState.close()
+                                                    if (item.route == "login") {
+                                                        // Clear the token and other saved user data
+                                                        with(sharedPreferences.edit()) {
+                                                            remove("user_id")
+                                                            remove("user_rol")
+                                                            apply()
+                                                        }
+                                                        // Navigate to login
+                                                        navController.navigate("login") {
+                                                            popUpTo(navController.graph.startDestinationId) {
+                                                                inclusive = true
+                                                            }
+                                                        }
+                                                    } else {
+                                                        navController.navigate(item.route) {
+                                                            popUpTo(navController.graph.startDestinationId) {
+                                                                inclusive = true
+                                                            }
+                                                        }
+                                                    }
                                                 }
-                                                navController.navigate(item.route)
                                             },
                                             icon = {
                                                 Icon(
@@ -141,7 +159,7 @@ class MainActivity : ComponentActivity() {
     fun AppContent(navController: NavHostController, viewModel: MainViewModel, context: Context) {
         val sharedPreferences = context.getSharedPreferences("encanto_artesano_prefs", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getString("user_id", null)
-
+        val userRol = sharedPreferences.getString("user_rol", null)
         // Actualizar el estado del ViewModel con los valores actuales de SharedPreferences
         LaunchedEffect(Unit) {
             viewModel.updateUserRole(sharedPreferences.getString("user_rol", null))
@@ -167,6 +185,34 @@ class MainActivity : ComponentActivity() {
                 composable("RegistroDeCompra") { BoughtItems(navController, viewModel) }
                 composable("active_users") { ActiveUsers() }
                 composable("account_deletion") { AccountDeletion(navController) }
+            }
+            // Handle back press
+            BackHandler {
+                when (navController.currentBackStackEntry?.destination?.route) {
+                    "home" -> {
+                        // Do nothing if already on home
+                    }
+                    "login" -> {
+                        // Close the app if on login screen
+                        ActivityCompat.finishAffinity(this)
+                    }
+                    else -> {
+                        // Navigate to home or adminHome based on user role
+                        if (userRol == "admin") {
+                            navController.navigate("adminHome") {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+                            }
+                        } else {
+                            navController.navigate("home") {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
