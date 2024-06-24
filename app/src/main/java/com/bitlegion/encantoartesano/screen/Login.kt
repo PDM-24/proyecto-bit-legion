@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.bitlegion.encantoartesano.Api.ApiClient
 import com.bitlegion.encantoartesano.Api.LoginRequest
+import com.bitlegion.encantoartesano.Api.LoginResponse
+import com.bitlegion.encantoartesano.Api.TokenManager
 import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
 import kotlinx.coroutines.launch
@@ -30,7 +32,6 @@ fun LoginScreen(navController: NavHostController, context: Context, viewModel: M
     var isUsernameValid by remember { mutableStateOf(false) }
     var isUsernameChecked by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-
 
     val checkUsername: suspend () -> Unit = {
         val response = ApiClient.apiService.checkUsername(username)
@@ -166,6 +167,9 @@ fun LoginScreen(navController: NavHostController, context: Context, viewModel: M
                     if (response.isSuccessful) {
                         val loginResponse = response.body()
 
+                        // Guardar el token globalmente
+                        loginResponse?.token?.let { TokenManager.saveToken(it) }
+
                         // Guardar las nuevas variables en SharedPreferences
                         with(sharedPreferences.edit()) {
                             putString("user_id", loginResponse?.userId)
@@ -193,7 +197,6 @@ fun LoginScreen(navController: NavHostController, context: Context, viewModel: M
             Text(text = "Iniciar Sesión", color = Color.White)
         }
 
-
         if (errorMessage.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = errorMessage, color = Color.Red)
@@ -206,6 +209,3 @@ fun LoginScreen(navController: NavHostController, context: Context, viewModel: M
         }
     }
 }
-
-
-

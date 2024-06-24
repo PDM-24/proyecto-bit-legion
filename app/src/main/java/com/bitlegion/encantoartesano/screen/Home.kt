@@ -82,7 +82,7 @@ fun TiendaUI(viewModel: MainViewModel, navController: NavHostController) {
 
 @Composable
 fun ProductoCard(producto: Product, navController: NavHostController, viewModel: MainViewModel) {
-    val isFavorite = viewModel.isProductFavorite(producto)
+    val isFavorite = remember { derivedStateOf { viewModel.isProductFavorite(producto) } }
 
     Card(
         modifier = Modifier
@@ -137,7 +137,7 @@ fun ProductoCard(producto: Product, navController: NavHostController, viewModel:
                         modifier = Modifier.size(30.dp),
                         colors = IconButtonDefaults.iconButtonColors(containerColor = Color(0xFF2B7A78), contentColor = Color.White)
                     ) {
-                        Icon(imageVector = Icons.Default.Favorite, contentDescription = null, tint = if (isFavorite) Color.Red else Color.White)
+                        Icon(imageVector = Icons.Default.Favorite, contentDescription = null, tint = if (isFavorite.value) Color.Red else Color.White)
                     }
                 }
             }

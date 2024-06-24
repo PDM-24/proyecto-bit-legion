@@ -27,6 +27,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -49,6 +50,11 @@ import kotlinx.coroutines.CoroutineScope
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FavUI(viewModel: MainViewModel) {
+    // Llamar a la función para cargar los productos favoritos cuando se abre la ventana
+    LaunchedEffect(Unit) {
+        viewModel.loadLikedProducts()
+    }
+
     val favProducts = viewModel.favProducts
 
     Column(modifier = Modifier

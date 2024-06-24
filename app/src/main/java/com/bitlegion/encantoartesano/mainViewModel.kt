@@ -13,11 +13,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bitlegion.encantoartesano.Api.ApiClient
 import com.bitlegion.encantoartesano.Api.Product
+import com.bitlegion.encantoartesano.Api.TokenManager
+import com.bitlegion.encantoartesano.Api.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 
 class MainViewModel : ViewModel() {
@@ -30,7 +33,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun isProductFavorite(product: Product): Boolean {
-        return product in favProducts
+        return favProducts.any { it._id == product._id }
     }
 
     fun toggleProductFavorite(product: Product) {
@@ -45,35 +48,45 @@ class MainViewModel : ViewModel() {
 
     private fun addProductToFavorites(product: Product) {
         favProducts.add(product)
-        // Llama a la API para agregar a favoritos
         updateFavoriteStatus(product._id.toString(), true)
     }
 
     private fun removeProductFromFavorites(product: Product) {
-        favProducts.remove(product)
-        // Llama a la API para quitar de favoritos
+        favProducts.removeAll { it._id == product._id }
         updateFavoriteStatus(product._id.toString(), false)
     }
 
     private fun updateFavoriteStatus(productId: String, isFavorite: Boolean) {
-        // Aquí haces la llamada a la API para actualizar el estado de favoritos
-        // Ejemplo:
         viewModelScope.launch {
-            val response = if (isFavorite) {
-                ApiClient.apiService.likeProduct(productId)
+            val token = TokenManager.getToken()
+            if (token != null) {
+                val response: Response<User> = if (isFavorite) {
+                    ApiClient.apiService.likeProduct(productId, "Bearer $token")
+                } else {
+                    ApiClient.apiService.likeProduct(productId, "Bearer $token")
+                }
+                if (!response.isSuccessful) {
+                    Log.e("MainViewModel", "Error updating favorite status: ${response.errorBody()?.string()}")
+                }
             } else {
-                ApiClient.apiService.unlikeProduct(productId)
+                Log.e("MainViewModel", "Token is null")
             }
-            // Manejar la respuesta si es necesario
         }
     }
 
-    private fun loadLikedProducts() {
+    fun loadLikedProducts() {
         viewModelScope.launch {
-            // Llama a la API para obtener los productos que le gustan al usuario
-            val response = ApiClient.apiService.getLikedProducts()
-            if (response.isSuccessful) {
-                favProducts.addAll(response.body() ?: emptyList())
+            val token = TokenManager.getToken()
+            if (token != null) {
+                val response = ApiClient.apiService.getLikedProducts("Bearer $token")
+                if (response.isSuccessful) {
+                    favProducts.clear()
+                    favProducts.addAll(response.body() ?: emptyList())
+                } else {
+                    Log.e("MainViewModel", "Error loading liked products: ${response.errorBody()?.string()}")
+                }
+            } else {
+                Log.e("MainViewModel", "Token is null")
             }
         }
     }

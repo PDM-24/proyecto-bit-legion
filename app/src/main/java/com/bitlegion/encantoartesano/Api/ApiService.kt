@@ -3,6 +3,7 @@ package com.bitlegion.encantoartesano.Api
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -45,13 +46,10 @@ interface ApiService {
     suspend fun getProductById(@Path("id") _id: String): Response<Product>
 
     @PATCH("post/like/{id}")
-    suspend fun likeProduct(@Path("id") id: String): Response<User>
-
-    @PATCH("post/unlike/{id}")
-    suspend fun unlikeProduct(@Path("id") id: String): Response<User>
+    suspend fun likeProduct(@Path("id") id: String, @Header("Authorization") token: String): Response<User>
 
     @GET("post/getLikes")
-    suspend fun getLikedProducts(): Response<List<Product>>
+    suspend fun getLikedProducts(@Header("Authorization") token: String): Response<List<Product>>
 }
 
 data class UsernameCheckResponse(val exists: Boolean)

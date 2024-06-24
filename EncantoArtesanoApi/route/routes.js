@@ -2,7 +2,7 @@ const express = require('express');
 
 const Model = require('../model/product.model')
 const Payment = require('../model/tarjetas.model')
-
+const User = require('../model/user.model')
 const router = express.Router()
 const ROLES = require("../data/roles.constants.json");
 const productController = require('../controllers/product.controller')
@@ -173,12 +173,19 @@ router.get("/getOnCart",
     productController.findOnCartProducts
 );
 
-//Obtener los productos que tiene likes del usuario
-router.get("/getLikes",
-    authentication,
-    authorization(ROLES.USER),
-    productController.findLikes
-);
+router.get('/getLikes', authentication, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId).populate('likedProducts');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json(user.likedProducts);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+});
 
 //Obtener los productos comprados por el usuario
 router.get("/getShopped",
@@ -188,26 +195,27 @@ router.get("/getShopped",
 );
 
 // Endpoint para agregar/quitar producto de favoritos
-router.patch('/like/:id', async (req, res) => {
-    const userId = req.params._id;
-    const { id: productId } = req.params;
-
+router.patch('/like/:id', authentication, async (req, res) => {
     try {
+        const userId = req.user._id;
+        const { id: productId } = req.params;
+
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        const index = user.favorites.indexOf(productId);
+        const index = user.likedProducts.indexOf(productId);
         if (index > -1) {
-            user.favorites.splice(index, 1); // Quitar de favoritos
+            user.likedProducts.splice(index, 1); // Quitar de favoritos
         } else {
-            user.favorites.push(productId); // Agregar a favoritos
+            user.likedProducts.push(productId); // Agregar a favoritos
         }
 
         await user.save();
-        res.status(200).json({ message: 'Favorites updated', favorites: user.favorites });
+        res.status(200).json({ message: 'Favorites updated', likedProducts: user.likedProducts });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: error.message });
     }
 });
