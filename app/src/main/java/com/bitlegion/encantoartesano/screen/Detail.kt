@@ -155,7 +155,9 @@ fun ProductDetailScreen(navController: NavHostController, productId: String, vie
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Button(
-                                onClick = { /* TODO: Handle add to cart */ },
+                                onClick = {
+                                    viewModel.addProductToCart(productId)
+                                },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0XFFE19390)),
                                 shape = RoundedCornerShape(8.dp),
                                 modifier = Modifier
@@ -177,12 +179,12 @@ fun ProductDetailScreen(navController: NavHostController, productId: String, vie
     }
 }
 
+
 /*
 @Preview(showBackground = true)
 @Composable
 fun ProductDetailScreenPreview() {
     val viewModel: MainViewModel = viewModel()
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val navController = rememberNavController()
     ProductDetailScreen(navController, "Nombre Producto", viewModel)
 }

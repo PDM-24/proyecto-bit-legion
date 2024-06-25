@@ -90,6 +90,8 @@ interface ApiService {
         @Part("price") price: RequestBody
     ): Response<UploadResponse>
 
+    @PATCH("post/onCart/{id}")
+    suspend fun addProductToCart(@Path("id") productId: String,  @Header("Authorization") token: String): Response<User>
 }
 
 data class UsernameCheckResponse(val exists: Boolean)

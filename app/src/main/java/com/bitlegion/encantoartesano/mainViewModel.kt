@@ -123,6 +123,20 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun addProductToCart(productId: String) {
+        viewModelScope.launch {
+            val token = TokenManager.getToken()
+            if (token != null) {
+                val response = ApiClient.apiService.addProductToCart(productId, "Bearer $token")
+                if (!response.isSuccessful) {
+                    Log.e("MainViewModel", "Error adding product to cart: ${response.errorBody()?.string()}")
+                }
+            } else {
+                Log.e("MainViewModel", "Token is null")
+            }
+        }
+    }
+
     private val _userRole = mutableStateOf<String?>(null)
     val userRole: State<String?> get() = _userRole
 
