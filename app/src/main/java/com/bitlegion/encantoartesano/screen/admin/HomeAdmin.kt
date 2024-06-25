@@ -120,7 +120,7 @@ fun ProductoCard(producto: Product, navController: NavHostController, viewModel:
         onDeleteActionDialog(
             onConfirm = {
                 coroutineScope.launch {
-                    val response = ApiClient.apiService.deleteProduct(""+producto._id)
+                    val response = ApiClient.apiService.deleteProductAdmin(""+producto._id)
                     if (response.isSuccessful) {
                         onDeleteProduct(producto)
                         Toast.makeText(context, "Producto eliminado exitosamente", Toast.LENGTH_SHORT).show()

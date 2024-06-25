@@ -1,6 +1,8 @@
+// PerfilScreen.kt
 package com.bitlegion.encantoartesano.screen
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,9 +31,11 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.bitlegion.encantoartesano.Api.ApiClient
 import com.bitlegion.encantoartesano.Api.Product
+import com.bitlegion.encantoartesano.Api.TokenManager
 import com.bitlegion.encantoartesano.Api.User
 import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
+import kotlinx.coroutines.launch
 
 @Composable
 fun PerfilScreen(navController: NavHostController, viewModel: MainViewModel) {
@@ -39,9 +43,11 @@ fun PerfilScreen(navController: NavHostController, viewModel: MainViewModel) {
     val sharedPreferences = context.getSharedPreferences("encanto_artesano_prefs", Context.MODE_PRIVATE)
     val userId = sharedPreferences.getString("user_id", "") ?: ""
     val userRol = sharedPreferences.getString("user_rol", null)
+    val token = TokenManager.getToken()
 
     var user by remember { mutableStateOf(User("", "", 0, "")) }
     var products by remember { mutableStateOf(listOf<Product>()) }
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(userId) {
         val response = ApiClient.apiService.getUserById(userId)
@@ -63,18 +69,18 @@ fun PerfilScreen(navController: NavHostController, viewModel: MainViewModel) {
         item {
             IconButton(onClick = {
                 if (userRol == "admin") {
-                navController.navigate("adminHome") {
-                    popUpTo(navController.graph.startDestinationId) {
-                        inclusive = true
+                    navController.navigate("adminHome") {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                    }
+                } else {
+                    navController.navigate("home") {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
                     }
                 }
-            } else {
-                navController.navigate("home") {
-                    popUpTo(navController.graph.startDestinationId) {
-                        inclusive = true
-                    }
-                }
-            }
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_chevron_left_24),
@@ -131,7 +137,19 @@ fun PerfilScreen(navController: NavHostController, viewModel: MainViewModel) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(products) { producto ->
-                    ProductoCardd(producto, navController)
+                    ProductoCardd(producto, navController) { productToDelete ->
+                        coroutineScope.launch {
+                            if (token != null) {
+                                val response = ApiClient.apiService.deleteProduct(productToDelete._id!!, "Bearer $token")
+                                if (response.isSuccessful) {
+                                    products = products.filter { it._id != productToDelete._id }
+                                    Toast.makeText(context, "Producto eliminado exitosamente", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(context, "Error al eliminar producto", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -147,9 +165,33 @@ fun PerfilScreen(navController: NavHostController, viewModel: MainViewModel) {
             ) {
                 Text(text = "Editar Perfil")
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = {
+                    coroutineScope.launch {
+                        if (token != null) {
+                            val response = ApiClient.apiService.deleteAllUserProducts(userId)
+                            if (response.isSuccessful) {
+                                products = emptyList()
+                                Toast.makeText(context, "Productos eliminados exitosamente", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Error al eliminar productos", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color(0xFFE19390),
+                    contentColor = Color.White
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Borrar Productos")
+            }
         }
     }
 }
+
 
 @Composable
 fun PerfilLabel(label: String, value: String, isPassword: Boolean = false) {
@@ -183,11 +225,13 @@ fun PerfilLabel(label: String, value: String, isPassword: Boolean = false) {
 }
 
 @Composable
-fun ProductoCardd(producto: Product, navController: NavHostController) {
+fun ProductoCardd(producto: Product, navController: NavHostController, onDelete: (Product) -> Unit) {
+    val context = LocalContext.current
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { navController.navigate("detail/${producto._id}")},
+            .clickable { navController.navigate("detail/${producto._id}") },
         elevation = 8.dp,
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -213,7 +257,17 @@ fun ProductoCardd(producto: Product, navController: NavHostController) {
                 color = Color.Gray
             )
             Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = {
+                    onDelete(producto)
+                },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFE19390), contentColor = Color.White),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(text = "Eliminar Producto")
+            }
         }
     }
 }
-

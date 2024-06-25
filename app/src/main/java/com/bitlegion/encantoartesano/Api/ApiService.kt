@@ -50,8 +50,11 @@ interface ApiService {
     @POST("post/postPayment")
     suspend fun savePayment(@Body payData: PayData): Response<Void>
 
+    @DELETE("post/deleteProductAdmin/{productId}")
+    suspend fun deleteProductAdmin(@Path("productId") productId: String): Response<Void>
+
     @DELETE("post/deleteProduct/{productId}")
-    suspend fun deleteProduct(@Path("productId") productId: String): Response<Void>
+    suspend fun deleteProduct(@Path("productId") productId: String, @Header("Authorization") token: String): Response<Void>
 
     @GET("post/getProduct/{id}")
     suspend fun getProductById(@Path("id") _id: String): Response<Product>
@@ -98,6 +101,10 @@ interface ApiService {
 
     @PATCH("post/checkout")
     suspend fun checkout(@Header("Authorization") token: String): Response<User>
+
+    @DELETE("post/deleteAllProducts/{userId}")
+    suspend fun deleteAllUserProducts(@Path("userId") userId: String): Response<Void>
+
 }
 
 data class UsernameCheckResponse(val exists: Boolean)

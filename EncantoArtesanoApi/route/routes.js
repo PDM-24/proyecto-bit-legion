@@ -1,7 +1,7 @@
 const express = require('express');
 
 const Model = require('../model/product.model')
-
+const Product = require('../model/product.model')
 const Payment = require('../model/tarjetas.model')
 const User = require('../model/user.model')
 const router = express.Router()
@@ -181,7 +181,7 @@ router.patch('/updateProduct/:id', async (req, res) => {
 
 
 //Delete Product
-router.delete('/deleteProduct/:id', async (req, res) => {
+router.delete('/deleteProductAdmin/:id', async (req, res) => {
 
     try {
         const { id } = req.params;
@@ -194,6 +194,45 @@ router.delete('/deleteProduct/:id', async (req, res) => {
         res.status(400).json({ "result": error.message })
     }
 
+});
+
+// Método para eliminar un producto específico
+router.delete('/deleteProduct/:productId', authentication, async (req, res) => {
+    try {
+        const { productId } = req.params;
+        const userId = req.user._id; // Obtener el ID del usuario autenticado
+
+        const product = await Product.findOne({ _id: productId, user: userId });
+        if (!product) {
+            return res.status(404).json({ message: 'Producto no encontrado o no pertenece al usuario autenticado' });
+        }
+
+        await Product.deleteOne({ _id: productId });
+        res.status(200).json({ message: 'Producto eliminado exitosamente' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Endpoint para borrar todos los productos de un usuario
+router.delete('/deleteAllProducts/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        // Verificar si el usuario existe
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        // Borrar todos los productos del usuario
+        await Product.deleteMany({ user: userId });
+
+        res.status(200).json({ message: 'Todos los productos del usuario han sido eliminados' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al eliminar productos del usuario' });
+    }
 });
 
 // Endpoint para agregar productos al carrito

@@ -119,7 +119,7 @@ fun SellerProfileScreen(navController: NavHostController, userId: String) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(products) { producto ->
-                    ProductoCardd(producto, navController)
+                    ProductoCarddd(producto, navController)
                 }
             }
         }
