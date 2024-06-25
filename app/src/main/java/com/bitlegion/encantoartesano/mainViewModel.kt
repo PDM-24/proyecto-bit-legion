@@ -25,11 +25,32 @@ import retrofit2.Response
 
 class MainViewModel : ViewModel() {
 
+    var shoppedProducts = mutableStateListOf<Product>()
+        private set
+
     var favProducts = mutableStateListOf<Product>()
         private set
 
     init {
+        loadShoppedProducts()
         loadLikedProducts()
+    }
+
+    fun loadShoppedProducts() {
+        viewModelScope.launch {
+            val token = TokenManager.getToken()
+            if (token != null) {
+                val response = ApiClient.apiService.getShoppedProducts("Bearer $token")
+                if (response.isSuccessful) {
+                    shoppedProducts.clear()
+                    shoppedProducts.addAll(response.body() ?: emptyList())
+                } else {
+                    Log.e("MainViewModel", "Error loading shopped products: ${response.errorBody()?.string()}")
+                }
+            } else {
+                Log.e("MainViewModel", "Token is null")
+            }
+        }
     }
 
     fun isProductFavorite(product: Product): Boolean {

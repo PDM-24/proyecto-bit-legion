@@ -71,6 +71,10 @@ interface ApiService {
 
     @PATCH("auth/updateUserState/{userId}")
     suspend fun updateState(@Path("userId") userId: String): Response<Void>
+
+    @GET("post/getShopped")
+    suspend fun getShoppedProducts(@Header("Authorization") token: String): Response<List<Product>>
+
 }
 
 data class UsernameCheckResponse(val exists: Boolean)

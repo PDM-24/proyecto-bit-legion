@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,15 +33,26 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
 import com.bitlegion.encantoartesano.MainViewModel
 
 @Composable
 fun BoughtItems(navController: NavController, viewModel: MainViewModel) {
-    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadShoppedProducts()
+    }
+
+    val shoppedProducts = viewModel.shoppedProducts
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -64,22 +76,18 @@ fun BoughtItems(navController: NavController, viewModel: MainViewModel) {
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            val items = listOf("Nombre Producto", "Nombre Producto", "Nombre Producto")
-            val prices = listOf(25, 25, 25)
-
             LazyColumn {
-                itemsIndexed(items) { index, item ->
+                items(shoppedProducts) { product ->
                     RegisterItem(
-                        itemName = item,
-                        itemPrice = prices[index],
-                        itemDescription = "Descripción del Producto",
-                        itemImage = painterResource(id = R.drawable.jarron)
+                        itemName = product.nombre,
+                        itemPrice = product.precio.toInt(),
+                        itemDescription = product.descripcion,
+                        itemImage = rememberAsyncImagePainter(product.imagenes.firstOrNull())
                     )
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
         }
     }
 }
@@ -117,6 +125,7 @@ fun RegisterItem(
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

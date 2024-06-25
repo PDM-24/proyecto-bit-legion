@@ -222,12 +222,21 @@ router.get('/getLikes', authentication, async (req, res) => {
     }
 });
 
-//Obtener los productos comprados por el usuario
-router.get("/getShopped",
-    authentication,
-    authorization(ROLES.USER),
-    productController.findShopped
-);
+// Obtener productos comprados
+router.get('/getShopped', authentication, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId).populate('shoppedProducts');
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json(user.shoppedProducts);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 // Endpoint para agregar/quitar producto de favoritos
 router.patch('/like/:id', authentication, async (req, res) => {
@@ -255,13 +264,6 @@ router.patch('/like/:id', authentication, async (req, res) => {
     }
 });
 
-
-//Conseguir los productos likeados
-router.get("/getLikes",
-    authentication,
-    authorization(ROLES.USER),
-    productController.findLikes
-);
 
 //Finalizar compra y agregar producto a ShoppedProducts
 router.patch("/shopped/:id",
