@@ -1,5 +1,9 @@
 package com.bitlegion.encantoartesano
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -14,13 +18,20 @@ import androidx.lifecycle.viewModelScope
 import com.bitlegion.encantoartesano.Api.ApiClient
 import com.bitlegion.encantoartesano.Api.Product
 import com.bitlegion.encantoartesano.Api.TokenManager
+import com.bitlegion.encantoartesano.Api.UploadResponse
 import com.bitlegion.encantoartesano.Api.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
+import java.util.Date
 
 
 class MainViewModel : ViewModel() {
@@ -123,5 +134,61 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun uploadImage(
+        context: Context,
+        imageUri: Uri,
+        name: String,
+        description: String,
+        price: Double,
+        location: String,
+        userId: String,
+        callback: (Boolean, String?) -> Unit
+    ) {
+        viewModelScope.launch {
+            val bitmap = withContext(Dispatchers.IO) {
+                MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
+            }
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+            val imageBytes = byteArrayOutputStream.toByteArray()
+
+            val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), imageBytes)
+            val body = MultipartBody.Part.createFormData("image", "image.jpg", requestFile)
+
+            val nameRequest = RequestBody.create("text/plain".toMediaTypeOrNull(), name)
+            val descriptionRequest = RequestBody.create("text/plain".toMediaTypeOrNull(), description)
+            val priceRequest = RequestBody.create("text/plain".toMediaTypeOrNull(), price.toString())
+
+            val response = withContext(Dispatchers.IO) {
+                ApiClient.apiService.uploadImage(body, nameRequest, descriptionRequest, priceRequest)
+            }
+
+            if (response.isSuccessful) {
+                val imageUrl = response.body()?.imageUrl ?: ""
+                val product = Product(
+                    _id = null,
+                    nombre = name,
+                    descripcion = description,
+                    precio = price,
+                    ubicacion = location,
+                    imagenes = listOf(imageUrl),
+                    calificacion = 0,
+                    fecha = Date(),
+                    user = userId
+                )
+                val productResponse = withContext(Dispatchers.IO) {
+                    ApiClient.apiService.postProduct(product)
+                }
+                if (productResponse.isSuccessful) {
+                    callback(true, null)
+                } else {
+                    callback(false, productResponse.errorBody()?.string())
+                }
+            } else {
+                // Agregar más detalles en los logs para depuración
+                callback(false, "Error uploading image: ${response.errorBody()?.string()}")
+            }
+        }
+    }
 
 }
