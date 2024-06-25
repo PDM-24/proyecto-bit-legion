@@ -3,15 +3,12 @@ package com.bitlegion.encantoartesano.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,14 +19,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.bitlegion.encantoartesano.R
-import com.bitlegion.encantoartesano.component.Header
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.material3.DrawerState
 import androidx.navigation.NavController
 import com.bitlegion.encantoartesano.MainViewModel
+import com.bitlegion.encantoartesano.R
+import com.bitlegion.encantoartesano.component.Header
 
 @Composable
 fun ShoppingCartScreen(navController: NavController, viewModel: MainViewModel) {
@@ -40,7 +33,7 @@ fun ShoppingCartScreen(navController: NavController, viewModel: MainViewModel) {
             .background(Color(0xFFD3C4B8))
     ) {
         // Call HomeHeader
-        Header(viewModel)
+        Header(viewModel, onSearch = {})
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -105,7 +98,7 @@ fun ShoppingCartScreen(navController: NavController, viewModel: MainViewModel) {
                     .fillMaxWidth()
                     .height(50.dp),
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFE07A5F))
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE07A5F))
             ) {
                 Text(text = "Pagar", color = Color.White, fontSize = 18.sp)
             }

@@ -1,34 +1,16 @@
 package com.bitlegion.encantoartesano.component
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,19 +23,16 @@ import androidx.compose.ui.unit.sp
 import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
 import com.bitlegion.encantoartesano.ui.theme.MainRed
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.log
-
 
 @Composable
-fun Header(viewModel: MainViewModel){
+fun Header(viewModel: MainViewModel, onSearch: (String) -> Unit) {
     val localScope = rememberCoroutineScope()
-    Row (
+    Row(
         modifier = Modifier.padding(10.dp),
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         IconButton(onClick = {
             viewModel.coroutineScope.launch {
                 withContext(localScope.coroutineContext) {
@@ -66,18 +45,17 @@ fun Header(viewModel: MainViewModel){
                 imageVector = Icons.Default.Menu,
                 contentDescription = "Menu",
                 tint = MainRed
-
             )
         }
         Spacer(modifier = Modifier.width(10.dp))
         Box(
-
             contentAlignment = Alignment.Center
-        ){
-            Image(painter = painterResource(id = R.drawable.logo), contentDescription =  "Background image",
+        ) {
+            Image(painter = painterResource(id = R.drawable.logo), contentDescription = "Background image",
                 Modifier
                     .width(width = 280.dp)
-                    .height(height = 60.dp))
+                    .height(height = 60.dp)
+            )
 
             Text(
                 text = "Encanto Artesano",
@@ -91,43 +69,39 @@ fun Header(viewModel: MainViewModel){
                         shape = RoundedCornerShape(8.dp)
                     )
                     .width(265.dp)
-
             )
         }
         Spacer(modifier = Modifier.width(12.dp))
-        IconButton(onClick = {
-
-        }) {
+        IconButton(onClick = {}) {
             Icon(
                 painter = painterResource(R.drawable.baseline_grid_view_24),
                 contentDescription = "Menu",
                 tint = MainRed
-
             )
         }
-
     }
-         SearchBar()
+    SearchBar(onSearch = onSearch)
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBar() {
-    var textState = remember { mutableStateOf(TextFieldValue("")) }
+fun SearchBar(onSearch: (String) -> Unit) {
+    var textState by remember { mutableStateOf(TextFieldValue("")) }
 
     TextField(
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp),
-
-        value = textState.value,
-        onValueChange = { textState.value = it },
+        value = textState,
+        onValueChange = {
+            textState = it
+            onSearch(it.text)
+        },
         placeholder = { Text("Buscar") },
         leadingIcon = { Icon(Icons.Filled.Search, contentDescription = "Buscar") },
         trailingIcon = {
-            if (textState.value.text.isNotEmpty()) {
-                IconButton(onClick = { textState.value = TextFieldValue("") }) {
+            if (textState.text.isNotEmpty()) {
+                IconButton(onClick = { textState = TextFieldValue("") }) {
                     Icon(Icons.Filled.Close, contentDescription = "Limpiar")
                 }
             }

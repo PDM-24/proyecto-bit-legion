@@ -68,7 +68,7 @@ fun FavUI(viewModel: MainViewModel, navController: NavHostController) {
         .background(color = grayWhite)
         .fillMaxSize()
     ) {
-        Header(viewModel)
+        Header(viewModel, onSearch = {})
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(

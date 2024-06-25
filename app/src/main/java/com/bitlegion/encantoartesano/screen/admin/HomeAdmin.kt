@@ -68,7 +68,7 @@ fun TiendaUIAdmin(viewModel: MainViewModel, navController: NavHostController) {
             .fillMaxSize()
     ) {
         // Barra de búsqueda
-        Header(viewModel)
+        Header(viewModel, onSearch = {})
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(

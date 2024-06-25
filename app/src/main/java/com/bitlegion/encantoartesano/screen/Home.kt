@@ -1,6 +1,5 @@
 package com.bitlegion.encantoartesano.screen
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,6 +32,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun TiendaUI(viewModel: MainViewModel, navController: NavHostController) {
     var productos by remember { mutableStateOf(emptyList<Product>()) }
+    var filteredProductos by remember { mutableStateOf(emptyList<Product>()) }
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
@@ -40,9 +40,18 @@ fun TiendaUI(viewModel: MainViewModel, navController: NavHostController) {
             val response = ApiClient.apiService.getAllActiveProducts()
             if (response.isSuccessful) {
                 productos = response.body() ?: emptyList()
+                filteredProductos = productos
             } else {
                 // Manejar error
             }
+        }
+    }
+
+    fun handleSearch(query: String) {
+        filteredProductos = if (query.isEmpty()) {
+            productos
+        } else {
+            productos.filter { it.nombre.contains(query, ignoreCase = true) }
         }
     }
 
@@ -52,7 +61,7 @@ fun TiendaUI(viewModel: MainViewModel, navController: NavHostController) {
             .fillMaxSize()
     ) {
         // Barra de búsqueda
-        Header(viewModel)
+        Header(viewModel, onSearch = ::handleSearch)
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(
@@ -73,7 +82,7 @@ fun TiendaUI(viewModel: MainViewModel, navController: NavHostController) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(productos) { producto ->
+            items(filteredProductos) { producto ->
                 ProductoCard(producto, navController, viewModel)
             }
         }
@@ -106,7 +115,6 @@ fun ProductoCard(producto: Product, navController: NavHostController, viewModel:
                     .width(110.dp)
                     .height(110.dp),
                 contentScale = ContentScale.Crop
-
             )
             Column(
                 modifier = Modifier
@@ -145,3 +153,4 @@ fun ProductoCard(producto: Product, navController: NavHostController, viewModel:
         }
     }
 }
+

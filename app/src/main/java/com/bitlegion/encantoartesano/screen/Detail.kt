@@ -7,17 +7,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -29,12 +26,10 @@ import com.bitlegion.encantoartesano.Api.Product
 import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
 import com.bitlegion.encantoartesano.component.Header
-import com.bitlegion.encantoartesano.ui.theme.Aqua
 import com.bitlegion.encantoartesano.ui.theme.grayWhite
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalMaterial3Api::class)
@@ -60,7 +55,7 @@ fun ProductDetailScreen(navController: NavHostController, productId: String, vie
             .background(color = grayWhite)
             .fillMaxSize()
     ) {
-        Header(viewModel)
+        Header(viewModel, onSearch = {})
 
         product?.let { prod ->
             Spacer(modifier = Modifier.height(16.dp))
@@ -182,14 +177,13 @@ fun ProductDetailScreen(navController: NavHostController, productId: String, vie
     }
 }
 
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun ProductDetailScreenPreview() {
     val viewModel: MainViewModel = viewModel()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val navController = rememberNavController()
-    ProductDetailScreen(navController,"Nombre Producto", viewModel)
+    ProductDetailScreen(navController, "Nombre Producto", viewModel)
 }
-
-
+*/
