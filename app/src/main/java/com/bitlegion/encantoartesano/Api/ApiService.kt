@@ -1,12 +1,16 @@
 package com.bitlegion.encantoartesano.Api
 
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 import java.util.Date
 
@@ -72,13 +76,23 @@ interface ApiService {
     @PATCH("auth/updateUserState/{userId}")
     suspend fun updateState(@Path("userId") userId: String): Response<Void>
 
+
     @GET("post/getShopped")
     suspend fun getShoppedProducts(@Header("Authorization") token: String): Response<List<Product>>
+
+
+    @Multipart
+    @POST("/api/upload")
+    suspend fun uploadImage(
+        @Part image: MultipartBody.Part,
+        @Part("name") name: RequestBody,
+        @Part("description") description: RequestBody,
+        @Part("price") price: RequestBody
+    ): Response<UploadResponse>
 
 }
 
 data class UsernameCheckResponse(val exists: Boolean)
-
 
 data class Product(
     val _id: String?,
@@ -88,7 +102,7 @@ data class Product(
     val ubicacion: String,
     val imagenes: List<String>,
     val calificacion: Int = 0,
-    val fecha:Date,
+    val fecha: Date,
     val user: String
 )
 
@@ -100,7 +114,7 @@ data class ProductHome(
     val ubicacion: String,
     val imagenes: List<String>,
     val calificacion: Int = 0,
-    val fecha:Date,
+    val fecha: Date,
     val user: UserProduct
 )
 
@@ -108,7 +122,6 @@ data class UserProduct(
     val _id: String,
     val state: Boolean
 )
-
 
 data class PayData(
     val _id: String?,
@@ -119,6 +132,6 @@ data class PayData(
     val user: String?
 )
 
-
-
-
+data class UploadResponse(
+    val imageUrl: String
+)

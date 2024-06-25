@@ -9,12 +9,13 @@ const ROLES = require("../data/roles.constants.json");
 const productController = require('../controllers/product.controller')
 const { authentication, authorization } = require("../middlewares/auth.middleware");
 
+
+
 const { idInParams, idenInParams, } = require("../validators/product.validator");
 const validateFields = require("../validators/index.validator");
 
 
-
-//Insert Product: POST
+// Insert Product: POST
 router.post('/postProduct', async (req, res) => {
     console.log('Received POST request at /postProduct');
     console.log('Request body:', req.body);
@@ -28,17 +29,15 @@ router.post('/postProduct', async (req, res) => {
         imagenes: req.body.imagenes || [], // Valor por defecto
         fecha: req.body.fecha || new Date(), // Valor por defecto
         user: req.body.user
-    })
+    });
 
     try {
-        const dataToSave = await data.save()
-        res.status(200).json({ "result": "ok" })
-    }
-    catch (error) {
+        const dataToSave = await data.save();
+        res.status(200).json({ "result": "ok" });
+    } catch (error) {
         console.error('Error saving product:', error.message);
-        res.status(400).json({ "result": error.message })
+        res.status(400).json({ "result": error.message });
     }
-
 });
 
 //Insertar tarjeta: POST

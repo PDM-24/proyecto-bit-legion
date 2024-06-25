@@ -42,8 +42,7 @@ const dataSchema = new Mongoose.Schema(
             type: Mongoose.Schema.Types.ObjectId,
             ref: "user",
             required: true
-         // No requerido solo para pruebas
-         //   required: true
+    
         },
            
 

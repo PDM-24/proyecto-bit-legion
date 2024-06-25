@@ -100,12 +100,13 @@ fun ProductoCard(producto: Product, navController: NavHostController, viewModel:
             verticalArrangement = Arrangement.SpaceAround
         ) {
             Image(
-                painter = rememberAsyncImagePainter(producto.imagenes.firstOrNull()),
+                painter = rememberAsyncImagePainter(model = producto.imagenes.firstOrNull()),
                 contentDescription = null,
                 modifier = Modifier
                     .width(110.dp)
                     .height(110.dp),
                 contentScale = ContentScale.Crop
+
             )
             Column(
                 modifier = Modifier

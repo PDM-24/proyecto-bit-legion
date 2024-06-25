@@ -19,13 +19,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.bitlegion.encantoartesano.Api.ApiClient
-import com.bitlegion.encantoartesano.Api.Product
+import coil.compose.rememberAsyncImagePainter
 import com.bitlegion.encantoartesano.R
 import kotlinx.coroutines.launch
 import android.widget.Toast
 import androidx.compose.ui.res.painterResource
-import coil.compose.rememberAsyncImagePainter
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.bitlegion.encantoartesano.MainViewModel
 import java.util.Date
 
 @Composable
@@ -36,6 +36,7 @@ fun ProductRegistration(navController: NavController, context: Context, userId: 
     var description by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val coroutineScope = rememberCoroutineScope()
+    val viewModel: MainViewModel = viewModel()
 
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         imageUri = uri
@@ -102,24 +103,27 @@ fun ProductRegistration(navController: NavController, context: Context, userId: 
         Spacer(modifier = Modifier.height(40.dp))
         Button(
             onClick = {
-                coroutineScope.launch {
-                    val product = Product(
-                        _id = null,
-                        nombre = productName,
-                        descripcion = description,
-                        precio = productPrice.toDoubleOrNull() ?: 0.0,
-                        ubicacion = location,
-                        imagenes = listOf(imageUri.toString()),
-                        fecha = Date(),
-                        user = userId
-                    )
-                    val response = ApiClient.apiService.postProduct(product)
-                    if (response.isSuccessful) {
-                        navController.navigate("home")
-                        Toast.makeText(context, "Producto publicado", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, "Error al publicar el producto", Toast.LENGTH_SHORT).show()
+                if (imageUri != null) {
+                    coroutineScope.launch {
+                        viewModel.uploadImage(
+                            context = context,
+                            imageUri = imageUri!!,
+                            name = productName,
+                            description = description,
+                            price = productPrice.toDoubleOrNull() ?: 0.0,
+                            location = location,
+                            userId = userId
+                        ) { isSuccess, errorMessage ->
+                            if (isSuccess) {
+                                navController.navigate("home")
+                                Toast.makeText(context, "Producto publicado", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Error al publicar el producto: $errorMessage", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
+                } else {
+                    Toast.makeText(context, "Por favor selecciona una imagen", Toast.LENGTH_SHORT).show()
                 }
             },
             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFE19390)),
@@ -130,7 +134,6 @@ fun ProductRegistration(navController: NavController, context: Context, userId: 
         }
     }
 }
-
 
 @Composable
 fun ProductDetails(label: String, value: String, onValueChange: (String) -> Unit) {
@@ -159,4 +162,3 @@ fun ProductDetails(label: String, value: String, onValueChange: (String) -> Unit
         )
     }
 }
-
