@@ -171,7 +171,11 @@ class MainActivity : ComponentActivity() {
                 }
                 composable("perfil") { PerfilScreen(navController, viewModel) }
                 composable("edit_profile") { EditProfileScreen(navController, viewModel, userId ?: "") }
-                composable("seller_profile") { SellerProfileScreen(navController) }
+                composable("seller_profile/{userId}") { backStackEntry ->
+                    val userId = backStackEntry.arguments?.getString("userId") ?: ""
+                    SellerProfileScreen(navController, userId)
+                }
+
                 composable("cart") { ShoppingCartScreen(navController, viewModel) }
                 composable("favorites") { FavUI(viewModel = viewModel, navController = navController) }
                 composable("pay") { PaymentScreen(navController) }

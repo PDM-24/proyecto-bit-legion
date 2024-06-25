@@ -5,7 +5,9 @@ data class User(
     val password: String,
     val edad: Int,
     val profilePicture: String = ""
-)
+) {
+    val _id: String = ""
+}
 
 data class LoginRequest(
     val identifier: String,

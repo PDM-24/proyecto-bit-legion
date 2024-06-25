@@ -23,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.bitlegion.encantoartesano.Api.ApiClient
 import com.bitlegion.encantoartesano.Api.Product
+import com.bitlegion.encantoartesano.Api.User
 import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
 import com.bitlegion.encantoartesano.component.Header
@@ -37,6 +38,7 @@ import kotlinx.coroutines.launch
 fun ProductDetailScreen(navController: NavHostController, productId: String, viewModel: MainViewModel) {
     val scope = rememberCoroutineScope()
     var product by remember { mutableStateOf<Product?>(null) }
+    var seller by remember { mutableStateOf<User?>(null) }
     val pagerState = rememberPagerState()
 
     LaunchedEffect(Unit) {
@@ -44,6 +46,12 @@ fun ProductDetailScreen(navController: NavHostController, productId: String, vie
             val response = ApiClient.apiService.getProductById(productId)
             if (response.isSuccessful) {
                 product = response.body()
+                product?.user?.let { userId ->
+                    val userResponse = ApiClient.apiService.getUserById(userId)
+                    if (userResponse.isSuccessful) {
+                        seller = userResponse.body()
+                    }
+                }
             } else {
                 // Manejar error
             }
@@ -106,7 +114,7 @@ fun ProductDetailScreen(navController: NavHostController, productId: String, vie
                     .fillMaxWidth()
                     .background(color = Color(0xFF008080), shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                     .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                    .padding(16.dp)
+                    .padding(horizontal = 16.dp, vertical = 50.dp) // Ajustar el padding vertical
             ) {
                 Column {
                     Row(
@@ -145,14 +153,16 @@ fun ProductDetailScreen(navController: NavHostController, productId: String, vie
                         Column(
                             horizontalAlignment = Alignment.End
                         ) {
-                            Text(
-                                text = "Nombre del vendedor",
-                                fontSize = 18.sp,
-                                color = Color.White,
-                                modifier = Modifier.clickable {
-                                    navController.navigate("seller_profile")
-                                }
-                            )
+                            seller?.let { user ->
+                                Text(
+                                    text = "Vendedor: ${user.username}",
+                                    fontSize = 18.sp,
+                                    color = Color.White,
+                                    modifier = Modifier.clickable {
+                                        navController.navigate("seller_profile/${user._id}")
+                                    }
+                                )
+                            }
                             Spacer(modifier = Modifier.height(4.dp))
                             Button(
                                 onClick = {
@@ -178,14 +188,3 @@ fun ProductDetailScreen(navController: NavHostController, productId: String, vie
         }
     }
 }
-
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun ProductDetailScreenPreview() {
-    val viewModel: MainViewModel = viewModel()
-    val navController = rememberNavController()
-    ProductDetailScreen(navController, "Nombre Producto", viewModel)
-}
-*/
