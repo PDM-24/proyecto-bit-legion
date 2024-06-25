@@ -66,7 +66,7 @@ fun ProductDetailScreen(navController: NavHostController, productId: String, vie
             .background(color = grayWhite)
             .fillMaxSize()
     ) {
-        Header(viewModel, onSearch = {})
+        Header(viewModel)
 
         product?.let { prod ->
             Spacer(modifier = Modifier.height(16.dp))

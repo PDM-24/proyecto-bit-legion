@@ -27,6 +27,7 @@ import com.bitlegion.encantoartesano.Api.Product
 import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
 import com.bitlegion.encantoartesano.component.Header
+import com.bitlegion.encantoartesano.component.HeaderWithSearchBar
 import kotlinx.coroutines.launch
 
 @Composable
@@ -61,7 +62,7 @@ fun TiendaUI(viewModel: MainViewModel, navController: NavHostController) {
             .fillMaxSize()
     ) {
         // Barra de búsqueda
-        Header(viewModel, onSearch = ::handleSearch)
+        HeaderWithSearchBar(viewModel, onSearch = ::handleSearch)
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(

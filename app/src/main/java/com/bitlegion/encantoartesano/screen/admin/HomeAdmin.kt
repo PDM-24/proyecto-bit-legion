@@ -40,6 +40,7 @@ import com.bitlegion.encantoartesano.Api.Product
 import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
 import com.bitlegion.encantoartesano.component.Header
+import com.bitlegion.encantoartesano.component.HeaderWithSearchBar
 import com.bitlegion.encantoartesano.ui.theme.Aqua
 import com.bitlegion.encantoartesano.ui.theme.grayWhite
 import kotlinx.coroutines.CoroutineScope
@@ -47,6 +48,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun TiendaUIAdmin(viewModel: MainViewModel, navController: NavHostController) {
     var productos by remember { mutableStateOf(emptyList<Product>()) }
+    var filteredProductos by remember { mutableStateOf(emptyList<Product>()) }
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -55,10 +57,19 @@ fun TiendaUIAdmin(viewModel: MainViewModel, navController: NavHostController) {
             val response = ApiClient.apiService.getAllProducts()
             if (response.isSuccessful) {
                 productos = response.body() ?: emptyList()
+                filteredProductos = productos
                 Toast.makeText(context, "Productos cargados exitosamente", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(context, "Error al cargar productos", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    fun handleSearch(query: String) {
+        filteredProductos = if (query.isEmpty()) {
+            productos
+        } else {
+            productos.filter { it.nombre.contains(query, ignoreCase = true) }
         }
     }
 
@@ -68,7 +79,7 @@ fun TiendaUIAdmin(viewModel: MainViewModel, navController: NavHostController) {
             .fillMaxSize()
     ) {
         // Barra de búsqueda
-        Header(viewModel, onSearch = {})
+        HeaderWithSearchBar(viewModel, onSearch = ::handleSearch)
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(
@@ -89,7 +100,7 @@ fun TiendaUIAdmin(viewModel: MainViewModel, navController: NavHostController) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(productos) { producto ->
+            items(filteredProductos) { producto ->
                 ProductoCard(producto, navController, viewModel, onDeleteProduct = { deletedProduct ->
                     productos = productos.filter { it._id != deletedProduct._id }
                 })

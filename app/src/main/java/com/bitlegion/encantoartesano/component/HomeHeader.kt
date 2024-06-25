@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun Header(viewModel: MainViewModel, onSearch: (String) -> Unit) {
+fun Header(viewModel: MainViewModel) {
     val localScope = rememberCoroutineScope()
     Row(
         modifier = Modifier.padding(10.dp),
@@ -80,7 +80,6 @@ fun Header(viewModel: MainViewModel, onSearch: (String) -> Unit) {
             )
         }
     }
-    SearchBar(onSearch = onSearch)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -117,4 +116,12 @@ fun SearchBar(onSearch: (String) -> Unit) {
             errorIndicatorColor = Color.Transparent
         ),
     )
+}
+
+@Composable
+fun HeaderWithSearchBar(viewModel: MainViewModel, onSearch: (String) -> Unit) {
+    Column {
+        Header(viewModel)
+        SearchBar(onSearch = onSearch)
+    }
 }

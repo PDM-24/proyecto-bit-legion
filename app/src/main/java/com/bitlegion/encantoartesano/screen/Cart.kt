@@ -42,7 +42,7 @@ fun ShoppingCartScreen(navController: NavController, viewModel: MainViewModel) {
             .background(Color(0xFFD3C4B8))
     ) {
         // Call HomeHeader
-        Header(viewModel, onSearch = {})
+        Header(viewModel)
 
         Spacer(modifier = Modifier.height(16.dp))
 
