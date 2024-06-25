@@ -42,7 +42,6 @@ import kotlinx.coroutines.launch
 fun ProductDetailScreen(navController: NavHostController, productId: String, viewModel: MainViewModel) {
     val scope = rememberCoroutineScope()
     var product by remember { mutableStateOf<Product?>(null) }
-    var isFavorite by remember { mutableStateOf(false) }
     val pagerState = rememberPagerState()
 
     LaunchedEffect(Unit) {
@@ -82,21 +81,6 @@ fun ProductDetailScreen(navController: NavHostController, productId: String, vie
                         painter = rememberAsyncImagePainter(prod.imagenes[page]),
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize()
-                    )
-                }
-                IconButton(
-                    onClick = { isFavorite = !isFavorite },
-                    modifier = Modifier
-                        .size(48.dp)
-                        .padding(8.dp)
-                        .offset(x = (-16).dp)
-                        .background(Aqua, shape = CircleShape)
-                        .clip(CircleShape)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Favorite,
-                        contentDescription = "Favorite",
-                        tint = if (isFavorite) Color.Red else Color.White
                     )
                 }
             }
@@ -140,11 +124,6 @@ fun ProductDetailScreen(navController: NavHostController, productId: String, vie
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
                             modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = "★★★★☆",
-                            fontSize = 32.sp,
-                            color = Color.Black,
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))

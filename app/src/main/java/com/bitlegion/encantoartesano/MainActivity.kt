@@ -173,7 +173,7 @@ class MainActivity : ComponentActivity() {
                 composable("edit_profile") { EditProfileScreen(navController, viewModel, userId ?: "") }
                 composable("seller_profile") { SellerProfileScreen(navController) }
                 composable("cart") { ShoppingCartScreen(navController, viewModel) }
-                composable("favorites") { FavUI(viewModel) }
+                composable("favorites") { FavUI(viewModel = viewModel, navController = navController) }
                 composable("pay") { PaymentScreen(navController) }
                 composable("vender") { ProductRegistration(navController, context, userId ?: "") }
                 composable("adminHome") { TiendaUIAdmin(viewModel = viewModel, navController = navController) }

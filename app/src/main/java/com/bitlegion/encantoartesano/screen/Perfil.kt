@@ -110,8 +110,6 @@ fun PerfilScreen(navController: NavHostController, viewModel: MainViewModel) {
             Spacer(modifier = Modifier.height(16.dp))
             PerfilLabel(label = "Nombre", value = user.username)
             Spacer(modifier = Modifier.height(16.dp))
-            PerfilLabel(label = "Contraseña", value = "************", isPassword = true)
-            Spacer(modifier = Modifier.height(16.dp))
             PerfilLabel(label = "Edad", value = user.edad.toString())
             Spacer(modifier = Modifier.height(32.dp))
             Text(
@@ -189,7 +187,7 @@ fun ProductoCardd(producto: Product, navController: NavHostController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* TODO: Navegar a detalle del producto */ },
+            .clickable { navController.navigate("detail/${producto._id}")},
         elevation = 8.dp,
         shape = RoundedCornerShape(8.dp)
     ) {
