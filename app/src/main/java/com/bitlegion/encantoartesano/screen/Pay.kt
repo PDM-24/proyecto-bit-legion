@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,12 +30,19 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.bitlegion.encantoartesano.Api.ApiClient
 import com.bitlegion.encantoartesano.Api.PayData
+import com.bitlegion.encantoartesano.MainViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun PaymentScreen(navController: NavController) {
+fun PaymentScreen(navController: NavController, viewModel: MainViewModel) {
     var showDialog by remember { mutableStateOf(false) }
     var selectedPaymentMethod by remember { mutableStateOf<PayData?>(null) }
+    val cartProducts = viewModel.cartProducts
+    val subtotal = cartProducts.sumOf { it.precio }
+    val shipping = 5
+    val total = subtotal + shipping
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -61,7 +69,15 @@ fun PaymentScreen(navController: NavController) {
                 })
                 PaymentDetailsSection(
                     selectedPaymentMethod = selectedPaymentMethod,
-                    onPayNowClick = { showDialog = true }
+                    subtotal = subtotal,
+                    shipping = shipping,
+                    total = total,
+                    onPayNowClick = {
+                        coroutineScope.launch {
+                            viewModel.checkout()
+                            showDialog = true
+                        }
+                    }
                 )
             }
 
@@ -76,86 +92,11 @@ fun PaymentScreen(navController: NavController) {
 }
 
 @Composable
-fun PaymentMethodsSection(onPaymentMethodSelected: (PayData) -> Unit) {
-    val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
-    val sharedPreferences = context.getSharedPreferences("encanto_artesano_prefs", Context.MODE_PRIVATE)
-    val userId = sharedPreferences.getString("user_id", null)
-    var paymentMethods by remember { mutableStateOf<List<PayData>>(emptyList()) }
-
-    fun showToast(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-    }
-
-    LaunchedEffect(userId) {
-        userId?.let {
-            coroutineScope.launch {
-                try {
-                    val response = ApiClient.apiService.getPaymentMethods(it)
-                    if (response.isSuccessful) {
-                        paymentMethods = response.body() ?: emptyList()
-                    } else {
-                        showToast("Error al obtener métodos de pago")
-                    }
-                } catch (e: Exception) {
-                    showToast("Error de red al obtener métodos de pago")
-                }
-            }
-        }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(0xFF008080))
-            .padding(16.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text("Métodos de pago", style = MaterialTheme.typography.h6, color = Color.White)
-            TextButton(onClick = { /* Ver todos los métodos de pago */ }) {
-                Text("Ver todos", color = Color.White)
-            }
-        }
-
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(paymentMethods) { paymentMethod ->
-                Card(
-                    modifier = Modifier
-                        .size(100.dp)
-                        .padding(4.dp)
-                        .clickable { onPaymentMethodSelected(paymentMethod) },
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = 4.dp
-                ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        Text(
-                            text = "**** ${paymentMethod.number.takeLast(4)}",
-                            style = MaterialTheme.typography.body1,
-                            color = Color.Black
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
 fun PaymentDetailsSection(
     selectedPaymentMethod: PayData?,
+    subtotal: Double,
+    shipping: Int,
+    total: Double,
     onPayNowClick: () -> Unit
 ) {
     var cardHolder by remember { mutableStateOf("") }
@@ -262,15 +203,32 @@ fun PaymentDetailsSection(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Mostrar subtotal, envío y total
         Text("Monto total", style = MaterialTheme.typography.subtitle1, color = Color.Black)
-
         Spacer(modifier = Modifier.height(4.dp))
-
-        Text(
-            "$80.00 USD",
-            style = MaterialTheme.typography.h5,
-            color = Color(0xFF008080)
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "Subtotal")
+            Text(text = "$$subtotal")
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "Envío")
+            Text(text = "$$shipping")
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "Total", fontWeight = FontWeight.Bold)
+            Text(text = "$$total", fontWeight = FontWeight.Bold)
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -296,19 +254,29 @@ fun PaymentDetailsSection(
                 else -> {
                     if (saveCardDetails) {
                         coroutineScope.launch {
-                            val pay = PayData(
-                                _id = null,
-                                titular = cardHolder,
-                                number = cardNumber,
-                                fechaVencimiento = expiryDate,
-                                cvv = cvv,
-                                user = userId
-                            )
-                            val response = ApiClient.apiService.savePayment(pay)
-                            if (response.isSuccessful) {
-                                onPayNowClick.invoke()
-                            } else {
-                                showToast("Error al guardar metodo de pago")
+                            val existingPaymentMethods = ApiClient.apiService.getPaymentMethods(userId!!)
+                            if (existingPaymentMethods.isSuccessful) {
+                                val existingCards = existingPaymentMethods.body()
+                                val isDuplicate = existingCards?.any { it.number == cardNumber } == true
+
+                                if (!isDuplicate) {
+                                    val pay = PayData(
+                                        _id = null,
+                                        titular = cardHolder,
+                                        number = cardNumber,
+                                        fechaVencimiento = expiryDate,
+                                        cvv = cvv,
+                                        user = userId
+                                    )
+                                    val response = ApiClient.apiService.savePayment(pay)
+                                    if (response.isSuccessful) {
+                                        onPayNowClick.invoke()
+                                    } else {
+                                        showToast("Error al guardar metodo de pago")
+                                    }
+                                } else {
+                                    showToast("Esta tarjeta ya está guardada")
+                                }
                             }
                         }
                     } else {
@@ -317,6 +285,85 @@ fun PaymentDetailsSection(
                 }
             }
         })
+    }
+}
+
+
+@Composable
+fun PaymentMethodsSection(onPaymentMethodSelected: (PayData) -> Unit) {
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences("encanto_artesano_prefs", Context.MODE_PRIVATE)
+    val userId = sharedPreferences.getString("user_id", null)
+    var paymentMethods by remember { mutableStateOf<List<PayData>>(emptyList()) }
+
+    fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
+    LaunchedEffect(userId) {
+        userId?.let {
+            coroutineScope.launch {
+                try {
+                    val response = ApiClient.apiService.getPaymentMethods(it)
+                    if (response.isSuccessful) {
+                        paymentMethods = response.body() ?: emptyList()
+                    } else {
+                        showToast("Error al obtener métodos de pago")
+                    }
+                } catch (e: Exception) {
+                    showToast("Error de red al obtener métodos de pago")
+                }
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFF008080))
+            .padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Métodos de pago", style = MaterialTheme.typography.h6, color = Color.White)
+            TextButton(onClick = { /* Ver todos los métodos de pago */ }) {
+                Text("Ver todos", color = Color.White)
+            }
+        }
+
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(paymentMethods) { paymentMethod ->
+                Card(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .padding(4.dp)
+                        .clickable { onPaymentMethodSelected(paymentMethod) },
+                    shape = RoundedCornerShape(8.dp),
+                    elevation = 4.dp
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Text(
+                            text = "**** ${paymentMethod.number.takeLast(4)}",
+                            style = MaterialTheme.typography.body1,
+                            color = Color.Black
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -346,7 +393,7 @@ fun PaymentSuccessDialog(onDismiss: () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
         Box(
             modifier = Modifier
-                .background(Color(0xFF00C853), RoundedCornerShape(8.dp))
+                .background(Color(0xFF008080), RoundedCornerShape(8.dp))
                 .padding(16.dp)
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
@@ -366,10 +413,4 @@ fun PaymentSuccessDialog(onDismiss: () -> Unit) {
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    PaymentScreen(navController = rememberNavController())
 }

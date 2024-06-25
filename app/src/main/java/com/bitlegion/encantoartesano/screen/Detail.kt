@@ -1,5 +1,6 @@
 package com.bitlegion.encantoartesano.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -40,6 +42,7 @@ fun ProductDetailScreen(navController: NavHostController, productId: String, vie
     var product by remember { mutableStateOf<Product?>(null) }
     var seller by remember { mutableStateOf<User?>(null) }
     val pagerState = rememberPagerState()
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         scope.launch {
@@ -167,6 +170,7 @@ fun ProductDetailScreen(navController: NavHostController, productId: String, vie
                             Button(
                                 onClick = {
                                     viewModel.addProductToCart(productId)
+                                    Toast.makeText(context, "Producto agregado al carrito", Toast.LENGTH_SHORT).show()
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = Color(0XFFE19390)),
                                 shape = RoundedCornerShape(8.dp),

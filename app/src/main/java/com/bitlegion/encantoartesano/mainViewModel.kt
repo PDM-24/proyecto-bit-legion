@@ -42,9 +42,14 @@ class MainViewModel : ViewModel() {
     var favProducts = mutableStateListOf<Product>()
         private set
 
+    var cartProducts = mutableStateListOf<Product>()
+        private set
+
+
     init {
         loadShoppedProducts()
         loadLikedProducts()
+        loadCartProducts()
     }
 
     fun loadShoppedProducts() {
@@ -130,6 +135,40 @@ class MainViewModel : ViewModel() {
                 val response = ApiClient.apiService.addProductToCart(productId, "Bearer $token")
                 if (!response.isSuccessful) {
                     Log.e("MainViewModel", "Error adding product to cart: ${response.errorBody()?.string()}")
+                }
+            } else {
+                Log.e("MainViewModel", "Token is null")
+            }
+        }
+    }
+
+    fun loadCartProducts() {
+        viewModelScope.launch {
+            val token = TokenManager.getToken()
+            if (token != null) {
+                val response = ApiClient.apiService.getOnCartProducts("Bearer $token")
+                if (response.isSuccessful) {
+                    cartProducts.clear()
+                    cartProducts.addAll(response.body() ?: emptyList())
+                } else {
+                    Log.e("MainViewModel", "Error loading cart products: ${response.errorBody()?.string()}")
+                }
+            } else {
+                Log.e("MainViewModel", "Token is null")
+            }
+        }
+    }
+
+    fun checkout() {
+        viewModelScope.launch {
+            val token = TokenManager.getToken()
+            if (token != null) {
+                val response = ApiClient.apiService.checkout("Bearer $token")
+                if (response.isSuccessful) {
+                    cartProducts.clear()
+                    loadShoppedProducts()
+                } else {
+                    Log.e("MainViewModel", "Error during checkout: ${response.errorBody()?.string()}")
                 }
             } else {
                 Log.e("MainViewModel", "Token is null")

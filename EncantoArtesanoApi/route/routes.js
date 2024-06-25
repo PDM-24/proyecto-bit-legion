@@ -40,26 +40,31 @@ router.post('/postProduct', async (req, res) => {
     }
 });
 
-//Insertar tarjeta: POST
-router.post('/postPayment', async (req, res) =>{
+// Insertar tarjeta: POST
+router.post('/postPayment', async (req, res) => {
+    const { titular, number, cvv, fechaVencimiento, user } = req.body;
 
-    const data = new Payment({
-        titular: req.body.titular,
-        number: req.body.number,
-        cvv: req.body.cvv,
-        fechaVencimiento: req.body.fechaVencimiento,
-        user: req.body.user 
-    })
+    try {
+        // Verificar si la tarjeta ya existe
+        const existingCard = await Payment.findOne({ number, user });
+        if (existingCard) {
+            return res.status(400).json({ message: "Esta tarjeta ya está guardada" });
+        }
 
-    try{
-        const dataToSave = await data.save()
-        res.status(200).json({"result": "ok"})
+        const data = new Payment({
+            titular,
+            number,
+            cvv,
+            fechaVencimiento,
+            user
+        });
+
+        const dataToSave = await data.save();
+        res.status(200).json({ result: "ok" });
+    } catch (error) {
+        console.error('Error saving payment method:', error.message);
+        res.status(400).json({ result: error.message });
     }
-    catch(error){
-        console.error('Error saving product:', error.message);
-        res.status(400).json({"result": error.message})
-    }
-
 });
 
 //Get all products
@@ -216,12 +221,20 @@ router.patch('/onCart/:id', authentication, async (req, res) => {
     }
 });
 
-//Obtener los productos en el carrito
-router.get("/getOnCart",
-    authentication,
-    authorization(ROLES.USER),
-    productController.findOnCartProducts
-);
+// Endpoint para obtener productos en el carrito
+router.get('/getOnCart', authentication, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId).populate('onCartProducts');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json(user.onCartProducts);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 router.get('/getLikes', authentication, async (req, res) => {
     try {
@@ -280,14 +293,26 @@ router.patch('/like/:id', authentication, async (req, res) => {
 });
 
 
-//Finalizar compra y agregar producto a ShoppedProducts
-router.patch("/shopped/:id",
-    authentication,
-    authorization(ROLES.USER),
-    idInParams,
-    validateFields,
-    productController.ShoppedToggleProduct
-);
+// Endpoint para mover productos del carrito a productos comprados
+router.patch('/checkout', authentication, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Mover productos del carrito a comprados
+        user.shoppedProducts.push(...user.onCartProducts);
+        user.onCartProducts = [];
+
+        await user.save();
+        res.status(200).json({ message: 'Checkout successful', shoppedProducts: user.shoppedProducts });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 //Agregar a productos en venta
 router.patch("/onSale/:id",

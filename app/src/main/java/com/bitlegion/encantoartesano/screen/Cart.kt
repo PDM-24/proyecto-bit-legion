@@ -3,6 +3,8 @@ package com.bitlegion.encantoartesano.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
@@ -20,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.bitlegion.encantoartesano.MainViewModel
 import com.bitlegion.encantoartesano.R
 import com.bitlegion.encantoartesano.component.Header
@@ -27,6 +30,12 @@ import com.bitlegion.encantoartesano.component.Header
 @Composable
 fun ShoppingCartScreen(navController: NavController, viewModel: MainViewModel) {
     val scope = rememberCoroutineScope()
+    val cartProducts by remember { mutableStateOf(viewModel.cartProducts) }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadCartProducts()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -50,27 +59,30 @@ fun ShoppingCartScreen(navController: NavController, viewModel: MainViewModel) {
             )
             Spacer(modifier = Modifier.height(8.dp))
 
-            val items = listOf("Nombre Producto", "Nombre Producto", "Nombre Producto")
-            val prices = listOf(25, 25, 25)
-
-            items.forEachIndexed { index, item ->
-                CartItem(
-                    itemName = item,
-                    itemPrice = prices[index],
-                    itemDescription = "Descripción del Producto",
-                    itemImage = painterResource(id = R.drawable.jarron)
-                )
+            LazyColumn {
+                items(cartProducts) { product ->
+                    CartItem(
+                        itemName = product.nombre,
+                        itemPrice = product.precio,
+                        itemDescription = product.descripcion,
+                        itemImage = rememberAsyncImagePainter(product.imagenes.firstOrNull())
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Subtotal, Shipping, Total
+            val subtotal = cartProducts.sumOf { it.precio }
+            val shipping = 5
+            val total = subtotal + shipping
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(text = "Subtotal")
-                Text(text = "$75")
+                Text(text = "$$subtotal")
             }
             Spacer(modifier = Modifier.height(4.dp))
             Row(
@@ -78,7 +90,7 @@ fun ShoppingCartScreen(navController: NavController, viewModel: MainViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(text = "Envío")
-                Text(text = "$5")
+                Text(text = "$$shipping")
             }
             Spacer(modifier = Modifier.height(4.dp))
             Row(
@@ -86,7 +98,7 @@ fun ShoppingCartScreen(navController: NavController, viewModel: MainViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(text = "Total", fontWeight = FontWeight.Bold)
-                Text(text = "$80", fontWeight = FontWeight.Bold)
+                Text(text = "$$total", fontWeight = FontWeight.Bold)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -102,7 +114,6 @@ fun ShoppingCartScreen(navController: NavController, viewModel: MainViewModel) {
             ) {
                 Text(text = "Pagar", color = Color.White, fontSize = 18.sp)
             }
-
         }
     }
 }
@@ -110,7 +121,7 @@ fun ShoppingCartScreen(navController: NavController, viewModel: MainViewModel) {
 @Composable
 fun CartItem(
     itemName: String,
-    itemPrice: Int,
+    itemPrice: Double,
     itemDescription: String,
     itemImage: Painter
 ) {
@@ -134,17 +145,5 @@ fun CartItem(
             Text(text = itemDescription, fontSize = 12.sp, color = Color.Gray)
             Text(text = "$$itemPrice", fontWeight = FontWeight.Bold)
         }
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = { /*TODO: Implement remove item*/ }) {
-                Icon(Icons.Filled.KeyboardArrowLeft, contentDescription = "Remove")
-            }
-            Text(text = "01")
-            IconButton(onClick = { /*TODO: Implement add item*/ }) {
-                Icon(Icons.Filled.KeyboardArrowRight, contentDescription = "Add")
-            }
-        }
     }
 }
-

@@ -178,7 +178,7 @@ class MainActivity : ComponentActivity() {
 
                 composable("cart") { ShoppingCartScreen(navController, viewModel) }
                 composable("favorites") { FavUI(viewModel = viewModel, navController = navController) }
-                composable("pay") { PaymentScreen(navController) }
+                composable("pay") { PaymentScreen(navController = navController, viewModel = viewModel) }
                 composable("vender") { ProductRegistration(navController, context, userId ?: "") }
                 composable("adminHome") { TiendaUIAdmin(viewModel = viewModel, navController = navController) }
                 composable("RegistroDeCompra") { BoughtItems(navController, viewModel) }
